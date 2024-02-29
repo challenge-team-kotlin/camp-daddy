@@ -1,0 +1,39 @@
+name: Camp Daddy CI
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    name: 우분투 설치
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: 레포지토리 체크아웃
+        uses: actions/checkout@v2
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Gradle 권한 부여
+        run: chmod +x gradlew
+
+      - name: Gradle 빌드 & 테스트 실행
+        run: ./gradlew build test
+
+      - name: 슬랙 Alarm 전송
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: CI 결과 알림
+          fields: message, commit, author, ref, workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
