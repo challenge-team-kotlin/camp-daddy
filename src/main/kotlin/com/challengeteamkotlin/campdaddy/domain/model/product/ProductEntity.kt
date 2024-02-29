@@ -39,9 +39,9 @@ class ProductEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    val id :String? =null
+    val id :Long? =null
 
-    @OneToMany(mappedBy = "products")
+    @OneToMany(mappedBy = "productEntity")
     val reviewEntity:List<ReviewEntity> = mutableListOf()
 
 }
