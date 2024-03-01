@@ -14,11 +14,11 @@ abstract class BaseTimeEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    lateinit var createdAt: LocalDateTime
+    var createdAt: LocalDateTime = LocalDateTime.now()
         protected set
 
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
-    lateinit var updatedAt: LocalDateTime
+    var updatedAt: LocalDateTime = LocalDateTime.now()
         protected set
 }
