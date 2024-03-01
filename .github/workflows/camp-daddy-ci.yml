@@ -15,8 +15,7 @@ jobs:
     steps:
       - name: .env 생성
         run: |
-          touch .env
-          echo ${{ secrets.ENV }} > .env
+          echo "${{ secrets.ENV }}" > .env
 
       - name: 레포지토리 체크아웃
         uses: actions/checkout@v2
