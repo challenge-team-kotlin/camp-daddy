@@ -27,6 +27,6 @@ class MemberEntity(
     val id: Long? = null
 
     @OneToMany(mappedBy = "memberId", cascade = [CascadeType.ALL] , orphanRemoval = true)
-    private val regionEntity: List<RegionEntity> = mutableListOf()
+    val regionEntity: List<RegionEntity> = listOf()
 
 }
