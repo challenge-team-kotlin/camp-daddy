@@ -23,7 +23,4 @@ class ChatRoomEntity(
     @Column(name = "chat_room_id")
     val id: Long? = null
 
-    fun validateRoomOwner(): Result<Boolean> =
-        Result.success(productEntity.memberEntity != memberEntity)
-
 }
