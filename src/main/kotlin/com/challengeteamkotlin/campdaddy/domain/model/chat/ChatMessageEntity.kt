@@ -8,7 +8,7 @@ import jakarta.persistence.*
 @Table(name = "chat_messages")
 class ChatMessageEntity(
 
-    @Column(length = 200, nullable = false)
+    @Column
     val message: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,10 +20,6 @@ class ChatMessageEntity(
     val chatRoomEntity: ChatRoomEntity,
 
     ) : BaseTimeEntity() {
-
-    init {
-        require(message.isNotEmpty())
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
