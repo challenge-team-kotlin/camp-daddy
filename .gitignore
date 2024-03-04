@@ -41,3 +41,6 @@ out/
 
 ### MAC ###
 .DS_STORE
+
+## dotenv
+.env
