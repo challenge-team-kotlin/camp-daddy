@@ -11,22 +11,22 @@ import org.hibernate.annotations.SQLDelete
 @SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
 class ProductEntity(
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "member_id", insertable = false, updatable = false)
-        val memberEntity: MemberEntity,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    val memberEntity: MemberEntity,
 
-        @Column(name = "price_per_day", nullable = false)
-        val pricePerDay: Long,
+    @Column(name = "price_per_day", nullable = false)
+    val pricePerDay: Long,
 
-        @Column(name = "title", nullable = false)
-        var title: String,
+    @Column(name = "title", nullable = false)
+    var title: String,
 
-        @Column(name = "content", nullable = false)
-        var content: String,
+    @Column(name = "content", nullable = false)
+    var content: String,
 
-        @Enumerated(value = EnumType.STRING)
-        @Column(name = "category", nullable = false)
-        val category: Category
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    val category: Category
 
 ) : BaseEntity() {
 
@@ -35,9 +35,22 @@ class ProductEntity(
     @Column(name = "product_id")
     val id: Long? = null
 
-    @OneToMany(mappedBy = "productEntity")
-    val reviewEntity: List<ReviewEntity> = listOf()
+    @OneToMany(mappedBy = "productEntity", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
+    protected val mutableReviews: MutableList<ReviewEntity> = mutableListOf()
+    val reviews: List<ReviewEntity>
+        get() = mutableReviews.toList()
 
-    @OneToMany
-    val images: List<ProductImageEntity> = listOf()
+    fun addReview(reviewEntity: ReviewEntity) {
+        mutableReviews.add(reviewEntity)
+    }
+
+    @OneToMany(mappedBy = "productEntity", cascade = [CascadeType.ALL], orphanRemoval = false)
+    protected val mutableImages: MutableList<ProductImageEntity> = mutableListOf()
+    val images: List<ProductImageEntity>
+        get() = mutableImages.toList()
+
+    fun uploadImage(productImageEntity: ProductImageEntity) {
+        mutableImages.add(productImageEntity)
+    }
+
 }

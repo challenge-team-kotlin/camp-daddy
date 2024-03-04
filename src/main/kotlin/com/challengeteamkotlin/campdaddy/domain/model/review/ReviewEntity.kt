@@ -10,25 +10,33 @@ import org.hibernate.annotations.SQLDelete
 @Table(name = "reviews")
 @SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
 class ReviewEntity(
-        @Column(name = "content")
-        var content: String,
+    @Column(name = "content")
+    var content: String,
 
-        @Column(name = "score")
-        var score: Int,
+    @Column(name = "score")
+    var score: Int,
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "member_id")
-        val memberEntity: MemberEntity,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    val memberEntity: MemberEntity,
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "product_id")
-        val productEntity: ProductEntity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    val productEntity: ProductEntity
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
     val id: Long? = null
 
-    @OneToMany
-    val images: List<ReviewImageEntity> = listOf()
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "reviewEntity")
+    protected val mutableImages: MutableList<ReviewImageEntity> = mutableListOf()
+    val images: List<ReviewImageEntity>
+        get() = mutableImages.toList()
+
+    fun uploadImage(reviewImageEntity: ReviewImageEntity) {
+        mutableImages.add(reviewImageEntity)
+    }
+
+
 }
