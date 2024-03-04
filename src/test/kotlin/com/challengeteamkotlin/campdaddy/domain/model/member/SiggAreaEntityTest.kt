@@ -4,11 +4,7 @@ import com.challengeteamkotlin.campdaddy.fixture.sido.SidoFixture.sidoTest
 import com.challengeteamkotlin.campdaddy.fixture.sigg.SiggFixture.siggTest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class SiggAreaEntityTest : BehaviorSpec({
     Given("sigg 생성 테스트") {
         val sigg = siggTest

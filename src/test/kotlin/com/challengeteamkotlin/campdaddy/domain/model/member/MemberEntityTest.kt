@@ -7,11 +7,7 @@ import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.wron
 import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.wrongPhoneNumMembers
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.string.shouldNotMatch
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MemberEntityTest : BehaviorSpec({
 
     Given("멤버 생성 테스트") {
