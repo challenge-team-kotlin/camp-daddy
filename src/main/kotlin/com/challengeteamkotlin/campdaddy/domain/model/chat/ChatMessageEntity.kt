@@ -19,7 +19,7 @@ class ChatMessageEntity(
     @JoinColumn(name = "chat_room_id")
     val chatRoomEntity: ChatRoomEntity,
 
-    ): BaseTimeEntity() {
+    ) : BaseTimeEntity() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
