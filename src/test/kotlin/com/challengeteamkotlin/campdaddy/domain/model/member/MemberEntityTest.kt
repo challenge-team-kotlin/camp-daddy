@@ -13,39 +13,10 @@ class MemberEntityTest : BehaviorSpec({
     Given("멤버 생성 테스트") {
         val member = testPerson
 
-        val wrongEmailMembers = wrongEmailMembers
-        val wrongNicknameMembers = wrongNicknameMembers
-        val wrongNameMembers = wrongNameMembers
-        val wrongPhoneNumMembers = wrongPhoneNumMembers
-
         val emailRegex = Regex("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
         val nicknameRegex = Regex("^\\S{2,10}$")
         val nameRegex = Regex("^\\S{2,10}$")
         val phoneNumRegex = Regex("^010-\\d{4}-\\d{4}$")
-
-        When("멤버의 이메일이 형식이 맞으면") {
-            Then("새로운 멤버가 만들어진다") {
-                member.email matches emailRegex
-            }
-        }
-
-        When("멤버의 닉네임이 형식에 맞으면") {
-            Then("새로운 멤버가 만들어진다") {
-                member.nickname matches nicknameRegex
-            }
-        }
-
-        When("멤버의 이름이 형식에 맞으면") {
-            Then("새로운 멤버가 만들어진다") {
-                member.name matches nameRegex
-            }
-        }
-
-        When("멤버의 휴대폰 번호가 형식에 맞으면") {
-            Then("새로운 멤버가 만들어진다") {
-                member.phoneNumber matches phoneNumRegex
-            }
-        }
 
         When("멤버의 이메일 형식이 틀리면") {
             Then("새로운 멤버를 만들 수 없다") {
@@ -68,6 +39,15 @@ class MemberEntityTest : BehaviorSpec({
         When("멤버의 휴대폰 번호 형식이 틀리면") {
             Then("새로운 멤버를 만들 수 없다") {
                 wrongPhoneNumMembers.map { it.email shouldNotMatch phoneNumRegex.toString() }
+            }
+        }
+
+        When("멤버의 모든 형식이 통과하면") {
+            Then("새로운 멤버를 만들 수 있다") {
+                member.email matches emailRegex
+                member.nickname matches nicknameRegex
+                member.name matches nameRegex
+                member.phoneNumber matches phoneNumRegex
             }
         }
     }
