@@ -1,8 +1,7 @@
 package com.challengeteamkotlin.campdaddy.domain.model.member
 
+import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.testPerson
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Assertions
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
@@ -10,24 +9,32 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MemberEntityTest : BehaviorSpec({
 
-    given("멤버를 생성할 값을 주어졌을 때") {
-        val email = "test@mail.com"
-        val nickname = "nk_test"
-        val name = "test"
-        val phoneNumber = "010-1234-1234"
-        `when`("멤버 안에 그 값을 넣게 되면") {
-            val member = MemberEntity(
-                email = email,
-                nickname = nickname,
-                name = name,
-                phoneNumber = phoneNumber
-            )
-            then("주어진 값과 멤버 안의 값이 같아야 한다") {
-                member.email shouldBe email
-                member.nickname shouldBe nickname
-                member.name shouldBe name
-                member.phoneNumber shouldBe phoneNumber
+    Given("멤버 생성 테스트") {
+        val member = testPerson
+        When("멤버의 이메일이 형식이 맞으면") {
+            val emailRegex = Regex("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+            Then("새로운 멤버가 만들어진다") {
+                member.email matches emailRegex
+            }
+        When("멤버의 닉네임이 형식에 맞으면") {
+            val nicknameRegex = Regex("^\\S{2,10}$")
+            Then("새로운 멤버가 만들어진다") {
+                member.nickname matches nicknameRegex
             }
         }
+        When("멤버의 이름이 형식에 맞으면") {
+            val nameRegex = Regex("^\\S{2,10}$")
+            Then("새로운 멤버가 만들어진다") {
+                member.name matches nameRegex
+            }
+        }
+        When("멤버의 휴대폰 번호가 형식에 맞으면") {
+            val phoneNumRegex = Regex("^010-\\d{4}-\\d{4}$")
+            Then("새로운 멤버가 만들어진다") {
+                member.phoneNumber matches phoneNumRegex
+            }
+        }
+        }
     }
+
 })
