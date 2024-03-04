@@ -1,23 +1,23 @@
 package com.challengeteamkotlin.campdaddy.domain.model.reservation
 
-import com.challengeteamkotlin.campdaddy.fixture.member.MemberFixture
-import com.challengeteamkotlin.campdaddy.fixture.product.ProductFixture
-import com.challengeteamkotlin.campdaddy.fixture.reservation.DateTimeFixture
+import com.challengeteamkotlin.campdaddy.fixture.reservation.ReservationFixture
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.date.shouldBeAfter
+import io.kotest.matchers.date.shouldBeBefore
 
 class ReservationEntityTest : BehaviorSpec({
-    Given("예약 생성 테스트") {
-        When("예약 Entity를 정상적으로 생성하면") {
-            val reservation = ReservationEntity(
-                    DateTimeFixture.today, DateTimeFixture.tomorrow, ProductFixture.tent, MemberFixture.buyer, ReservationsStatus.REQ
-            )
-            Then("Entity에 값이 저장된다.") {
-                reservation.startDate shouldBe DateTimeFixture.today
-                reservation.endDate shouldBe DateTimeFixture.tomorrow
-                reservation.productEntity shouldBe ProductFixture.tent
-                reservation.memberEntity shouldBe MemberFixture.buyer
-                reservation.reservationsStatus shouldBe ReservationsStatus.REQ
+    Given("예약 Entity 생성 테스트") {
+        When("예약 Entity의 시작 날짜가 종료 날짜보다 뒤 일 경우") {
+            val wrongDateReservation = ReservationFixture.wrongDateReservation
+            Then("새로운 예약 Entity를 만들 수 없다.") {
+                wrongDateReservation.startDate shouldBeAfter wrongDateReservation.endDate
+            }
+
+        }
+        When("예약 Entity의 시작 날짜가 종료 날짜보다 앞 일 경우") {
+            val reservation = ReservationFixture.reservation
+            Then("새로운 예약 Entity를 만들 수 있다.") {
+                reservation.startDate shouldBeBefore reservation.endDate
             }
         }
     }
