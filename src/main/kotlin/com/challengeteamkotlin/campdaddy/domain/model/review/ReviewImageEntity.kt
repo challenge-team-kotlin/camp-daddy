@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 
 
 @Entity
-@Table(name = "reveiws_image")
+@Table(name = "reviews_image")
 class ReviewImageEntity(
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "review_id")
@@ -23,6 +23,6 @@ class ReviewImageEntity(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reveiw_image_id")
+    @Column(name = "review_image_id")
     val id: Long? = null;
 }
