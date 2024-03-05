@@ -1,9 +1,6 @@
 package com.challengeteamkotlin.campdaddy.fixture.review
 
-import com.challengeteamkotlin.campdaddy.domain.model.review.ReviewEntity
 import com.challengeteamkotlin.campdaddy.domain.model.review.ReviewImageEntity
-import com.challengeteamkotlin.campdaddy.fixture.member.MemberFixture
-import com.challengeteamkotlin.campdaddy.fixture.product.ProductFixture
 
 object ReviewImageFixture {
 

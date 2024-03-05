@@ -18,8 +18,8 @@ class ReviewEntityTest : BehaviorSpec({
 
         }
 
-        When("리뷰 Entity의 Content가 빈 값이라면"){
-            Then("새로운 리뷰 Entity를 만들 수 없다"){
+        When("리뷰 Entity의 Content가 빈 값이라면") {
+            Then("새로운 리뷰 Entity를 만들 수 없다") {
                 ReviewFixture.wrongContentReview.content shouldBe ""
             }
         }
