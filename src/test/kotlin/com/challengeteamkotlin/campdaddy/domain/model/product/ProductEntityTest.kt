@@ -11,7 +11,7 @@ class ProductEntityTest : BehaviorSpec({
         When("이미지를 올린다면?") {
             Then("게시글이 생성된다.") {
                 lamp.uploadImage(productImage1)
-                lamp.images shouldBe productImage1
+                lamp.images[0] shouldBe productImage1
             }
         }
 
@@ -19,7 +19,7 @@ class ProductEntityTest : BehaviorSpec({
             Then("게시글이 생성된다.") {
                 lamp.uploadImage(productImage1)
                 lamp.uploadImage(productImage2)
-                lamp.images shouldBe productImage1
+                lamp.images.size shouldBe 2
             }
         }
     }
