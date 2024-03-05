@@ -12,12 +12,12 @@ class ChatRoomTest : BehaviorSpec({
     Given("채팅룸 생성 테스트") {
         When("채팅룸을 만든 멤버가 판매자라면") {
             Then("채팅룸이 생성되지 않는다.") {
-                chatRoom.memberEntity shouldNotBe seller
+                chatRoom.member shouldNotBe seller
             }
         }
         When("채팅룸을 만든 멤버가 구매자라면") {
             Then("채팅룸이 생성된다.") {
-                chatRoom.memberEntity shouldBe buyer
+                chatRoom.member shouldBe buyer
             }
         }
     }

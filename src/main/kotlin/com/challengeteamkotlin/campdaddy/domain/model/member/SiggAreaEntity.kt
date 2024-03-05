@@ -14,13 +14,11 @@ class SiggAreaEntity(
 
     @ManyToOne
     @JoinColumn(name = "sido_area_id")
-    val sidoAreaEntity: SidoAreaEntity
+    val sidoArea: SidoAreaEntity
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sigg_area_id")
     val id:Long?=null
-
-
 
 }
