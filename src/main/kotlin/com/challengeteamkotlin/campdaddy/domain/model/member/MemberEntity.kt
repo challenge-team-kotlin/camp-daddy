@@ -25,8 +25,4 @@ class MemberEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     val id: Long? = null
-
-    @OneToMany(mappedBy = "memberId", cascade = [CascadeType.ALL] , orphanRemoval = true)
-    private val regionEntity: List<RegionEntity> = mutableListOf()
-
 }
