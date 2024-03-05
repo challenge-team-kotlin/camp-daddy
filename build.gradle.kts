@@ -96,6 +96,12 @@ dependencies {
     // .env
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
+    // web socket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.webjars:sockjs-client:1.1.2")
+    implementation("org.webjars:stomp-websocket:2.3.3-1")
+
+
 }
 
 tasks.withType<KotlinCompile> {

@@ -10,11 +10,11 @@ class ChatRoomEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
-    val memberEntity: MemberEntity,
+    val member: MemberEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    val productEntity: ProductEntity,
+    val product: ProductEntity,
 
     ) {
 

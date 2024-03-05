@@ -12,7 +12,7 @@ class SiggAreaEntityTest : BehaviorSpec({
             Then("sigg 가 생성된다") {
                 sigg.name shouldBe "sigg"
                 sigg.admCode shouldBe "1234"
-                sigg.sidoAreaEntity shouldBe sidoTest
+                sigg.sidoArea shouldBe sidoTest
             }
         }
     }

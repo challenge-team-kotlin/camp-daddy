@@ -13,11 +13,15 @@ class ChatMessageEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    val memberEntity: MemberEntity,
+    val member: MemberEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
-    val chatRoomEntity: ChatRoomEntity,
+    val chatRoom: ChatRoomEntity,
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    val status: MessageStatus
 
     ) : BaseTimeEntity() {
 
