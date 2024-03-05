@@ -1,0 +1,7 @@
+package com.challengeteamkotlin.campdaddy.domain.repository.member
+
+import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.member.MemberJpaRepository
+import org.springframework.stereotype.Repository
+
+@Repository
+interface MemberRepository: MemberJpaRepository
