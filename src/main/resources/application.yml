@@ -16,3 +16,9 @@ spring:
       ddl-auto: create-drop
     open-in-view: false
 
+auth:
+  jwt:
+    issuer: ${{ JWT_ISSUER }}
+    secret: ${{ JWT_SECRET }}
+    accessTokenExpirationHour: ${{ JWT_ACCESS_EXPIRATION_HOUR }}
+
