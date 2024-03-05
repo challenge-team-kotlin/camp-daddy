@@ -25,12 +25,7 @@ class ChatMessageService(
         val sender = memberRepository.findByIdOrNull(request.userId) ?: TODO("throw EntityNotFoundException()")
         val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: TODO("throw EntityNotFoundException()")
 
-        val message = request.of(
-            message = request.message,
-            member = sender,
-            chatRoom = chatRoom,
-            status = request.status
-        )
+        val message = request.of(sender, chatRoom,)
 
         chatMessageRepository.save(message)
     }

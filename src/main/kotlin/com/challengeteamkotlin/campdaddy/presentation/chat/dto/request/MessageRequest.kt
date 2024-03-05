@@ -10,7 +10,7 @@ data class MessageRequest(
     val message: String,
     val status: MessageStatus
 ) {
-    fun of(message: String, member: MemberEntity, chatRoom: ChatRoomEntity, status: MessageStatus) =
+    fun of(member: MemberEntity, chatRoom: ChatRoomEntity) =
         ChatMessageEntity(message, member, chatRoom, status)
 
 }
