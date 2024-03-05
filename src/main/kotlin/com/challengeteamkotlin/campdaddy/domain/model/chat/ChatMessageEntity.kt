@@ -19,6 +19,10 @@ class ChatMessageEntity(
     @JoinColumn(name = "chat_room_id")
     val chatRoom: ChatRoomEntity,
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    val status: MessageStatus
+
     ) : BaseTimeEntity() {
 
     @Id
