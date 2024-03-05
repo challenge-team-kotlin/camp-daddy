@@ -7,10 +7,10 @@ import jakarta.persistence.*
 class ProductImageEntity(
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "product_id")
-        val productEntity: ProductEntity,
+        val product: ProductEntity,
 
-        @Column(name = "image", nullable = false)
-        val image: String,
+        @Column(name = "image_url", nullable = false)
+        val imageUrl: String,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

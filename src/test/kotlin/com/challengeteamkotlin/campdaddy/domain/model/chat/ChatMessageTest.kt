@@ -16,8 +16,8 @@ class ChatMessageTest : BehaviorSpec({
             Then("메세지가 저장된다.") {
                 chat.message shouldBe "빌려주삼"
                 chat.message shouldNotBe ""
-                chat.chatRoomEntity.memberEntity shouldBe buyer
-                chat.memberEntity shouldBe buyer
+                chat.chatRoom.member shouldBe buyer
+                chat.member shouldBe buyer
             }
         }
     }

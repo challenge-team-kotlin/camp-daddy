@@ -1,7 +1,6 @@
 package com.challengeteamkotlin.campdaddy.domain.model.reservation
 
 import com.challengeteamkotlin.campdaddy.common.entity.BaseEntity
-import com.challengeteamkotlin.campdaddy.common.entity.BaseTimeEntity
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import jakarta.persistence.*
@@ -20,15 +19,15 @@ class ReservationEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    val productEntity: ProductEntity,
+    val product: ProductEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
-    val memberEntity: MemberEntity,
+    val member: MemberEntity,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    val reservationsStatus: ReservationsStatus
+    val reservationStatus: ReservationStatus
 
     ) : BaseEntity() {
     @Id

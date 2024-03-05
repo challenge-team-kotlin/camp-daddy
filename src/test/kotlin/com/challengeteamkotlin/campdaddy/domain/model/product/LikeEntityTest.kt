@@ -12,13 +12,13 @@ class LikeEntityTest : BehaviorSpec({
     Given("Like 생성 테스트") {
         When("좋아요를 작성자가 누른다면?") {
             Then("좋아요가 생성되지 않는다.") {
-                like.memberEntity shouldNotBe seller
+                like.member shouldNotBe seller
             }
         }
 
         When("좋아요를 다른이가 누른다면?") {
             Then("좋아요가 생성된다.") {
-                like.memberEntity shouldBe buyer
+                like.member shouldBe buyer
             }
         }
     }

@@ -13,7 +13,7 @@ class ProductEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
-    val memberEntity: MemberEntity,
+    val member: MemberEntity,
 
     @Column(name = "price_per_day", nullable = false)
     val pricePerDay: Long,
@@ -35,22 +35,22 @@ class ProductEntity(
     @Column(name = "product_id")
     val id: Long? = null
 
-    @OneToMany(mappedBy = "productEntity", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
     protected val mutableReviews: MutableList<ReviewEntity> = mutableListOf()
     val reviews: List<ReviewEntity>
         get() = mutableReviews.toList()
 
-    fun addReview(reviewEntity: ReviewEntity) {
-        mutableReviews.add(reviewEntity)
+    fun addReview(review: ReviewEntity) {
+        mutableReviews.add(review)
     }
 
-    @OneToMany(mappedBy = "productEntity", cascade = [CascadeType.ALL], orphanRemoval = false)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
     protected val mutableImages: MutableList<ProductImageEntity> = mutableListOf()
     val images: List<ProductImageEntity>
         get() = mutableImages.toList()
 
-    fun uploadImage(productImageEntity: ProductImageEntity) {
-        mutableImages.add(productImageEntity)
+    fun uploadImage(productImage: ProductImageEntity) {
+        mutableImages.add(productImage)
     }
 
 }
