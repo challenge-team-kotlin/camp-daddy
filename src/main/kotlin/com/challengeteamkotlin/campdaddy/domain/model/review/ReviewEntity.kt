@@ -18,18 +18,18 @@ class ReviewEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    val memberEntity: MemberEntity,
+    val member: MemberEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    val productEntity: ProductEntity
+    val product: ProductEntity
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
     val id: Long? = null
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "reviewEntity")
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "review", orphanRemoval = true)
     protected val mutableImages: MutableList<ReviewImageEntity> = mutableListOf()
     val images: List<ReviewImageEntity>
         get() = mutableImages.toList()
@@ -37,6 +37,5 @@ class ReviewEntity(
     fun uploadImage(reviewImageEntity: ReviewImageEntity) {
         mutableImages.add(reviewImageEntity)
     }
-
 
 }

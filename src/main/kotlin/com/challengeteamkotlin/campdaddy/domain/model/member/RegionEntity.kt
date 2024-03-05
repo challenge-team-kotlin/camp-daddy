@@ -10,7 +10,7 @@ class RegionEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sigg_area_id")
-    val siggAreaEntity: SiggAreaEntity,
+    val siggArea: SiggAreaEntity,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

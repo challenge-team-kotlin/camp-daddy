@@ -29,7 +29,7 @@ class ProductEntityTest : BehaviorSpec({
 
         When("이미지가 없이 생성된다면?"){
             Then("게시글이 생성된다."){
-                tent1.memberEntity shouldBe seller
+                tent1.member shouldBe seller
             }
         }
     }

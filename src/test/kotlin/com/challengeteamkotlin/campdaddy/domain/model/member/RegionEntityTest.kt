@@ -11,7 +11,7 @@ class RegionEntityTest : BehaviorSpec({
         When("region 을 생성하면") {
             Then("region 이 생성된다") {
                 region.memberId shouldBe 123412341234
-                region.siggAreaEntity shouldBe siggTest
+                region.siggArea shouldBe siggTest
             }
         }
     }
