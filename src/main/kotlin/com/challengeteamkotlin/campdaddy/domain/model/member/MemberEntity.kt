@@ -1,11 +1,9 @@
 package com.challengeteamkotlin.campdaddy.domain.model.member
 
 import com.challengeteamkotlin.campdaddy.common.entity.BaseEntity
-import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.member.MemberJpaRepository
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
-import org.springframework.security.crypto.password.PasswordEncoder
 
 @Entity
 @Table(name = "members")
@@ -40,18 +38,3 @@ class MemberEntity(
     }
 }
 
-fun checkedEmailOrNicknameExists(email: String, nickname: String, memberJpaRepository: MemberJpaRepository) {
-    if (memberJpaRepository.existsByEmail(email)) {
-        TODO("Exception")
-    }
-
-    if (memberJpaRepository.existsByNickname(nickname)) {
-        TODO("Exception")
-    }
-}
-
-fun checkedLoginPassword(password: String, inputPassword: String, passwordEncoder: PasswordEncoder) {
-    if (!passwordEncoder.matches(inputPassword, password)) {
-        TODO("Exception")
-    }
-}

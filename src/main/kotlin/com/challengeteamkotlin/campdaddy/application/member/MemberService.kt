@@ -1,10 +1,13 @@
 package com.challengeteamkotlin.campdaddy.application.member
 
+import com.challengeteamkotlin.campdaddy.application.member.exception.EmailNicknameAlreadyExistException
+import com.challengeteamkotlin.campdaddy.application.member.exception.EmailPasswordMisMatchException
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
+import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
 import com.challengeteamkotlin.campdaddy.common.security.jwt.JwtPlugin
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberRole
-import com.challengeteamkotlin.campdaddy.domain.model.member.checkedEmailOrNicknameExists
-import com.challengeteamkotlin.campdaddy.domain.model.member.checkedLoginPassword
 import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.member.MemberJpaRepository
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.LoginRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.SignupRequest
@@ -23,11 +26,11 @@ class MemberService(
 ) {
     fun getProfile(memberId: Long): MemberResponse {
         return memberJpaRepository.findByIdOrNull(memberId)?.let { MemberResponse.from(it) }
-            ?: TODO("Exception")
+            ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
     }
 
     fun updateProfile(memberId: Long, request: UpdateProfileRequest) {
-        val profile = memberJpaRepository.findByIdOrNull(memberId) ?: TODO("Exception")
+        val profile = memberJpaRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         profile.toUpdate(request)
         memberJpaRepository.save(profile)
     }
@@ -47,7 +50,7 @@ class MemberService(
     }
 
     fun login(request: LoginRequest): LoginResponse {
-        val member = memberJpaRepository.findByEmail(request.email) ?: TODO("Exception")
+        val member = memberJpaRepository.findByEmail(request.email) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         checkedLoginPassword(member.password, request.password, passwordEncoder)
         return LoginResponse(
             accessToken = jwtPlugin.generateAccessToken(
@@ -59,7 +62,19 @@ class MemberService(
     }
 
     fun deleteMember(memberId: Long) {
-        val member = memberJpaRepository.findByIdOrNull(memberId) ?: TODO("Exception")
+        val member = memberJpaRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         memberJpaRepository.delete(member)
+    }
+
+   private fun checkedLoginPassword(password: String, inputPassword: String, passwordEncoder: PasswordEncoder) {
+        if (!passwordEncoder.matches(inputPassword, password)) {
+            throw EmailPasswordMisMatchException(MemberErrorCode.EMAIL_PASSWORD_MISMATCH)
+        }
+    }
+
+   private fun checkedEmailOrNicknameExists(email: String, nickname: String, memberJpaRepository: MemberJpaRepository) {
+        if (memberJpaRepository.existsByEmailOrNickname(email, nickname)) {
+            throw EmailNicknameAlreadyExistException(MemberErrorCode.EMAIL_NICKNAME_ALREADY_EXIST)
+        }
     }
 }
