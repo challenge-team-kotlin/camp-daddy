@@ -26,7 +26,7 @@ class ChatMessageController(
         @Payload @Valid request: MessageRequest
     ) {
         simpMessageTemplate.convertAndSend("$SUBSCRIBE_DESTINATION$roomId", request)
-        // 메세지 저장 기능 추후 적용
+        chatMessageService.save(roomId, request)
     }
 
     @GetMapping("/chats/{roomId}/messages")
