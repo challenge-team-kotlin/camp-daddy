@@ -23,7 +23,6 @@ class MemberController(
     private val memberService: MemberService
 ) {
     @Operation(summary = "프로필 조회")
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/members/{memberId}")
     fun getProfile(
         @PathVariable memberId: Long
