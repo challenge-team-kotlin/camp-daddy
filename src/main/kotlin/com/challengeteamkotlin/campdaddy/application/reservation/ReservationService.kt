@@ -8,8 +8,8 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.reservation.ReservationRepository
-import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.ReservationCreateRequest
-import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.ReservationPatchStatusRequest
+import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.CreateReservationRequest
+import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.PatchReservationStatusRequest
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.response.ReservationResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -25,44 +25,44 @@ class ReservationService(
 ) {
 
     @Transactional
-    fun createReservation(reservationCreateRequest: ReservationCreateRequest) {
-        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(reservationCreateRequest.memberId)
+    fun createReservation(createReservationRequest: CreateReservationRequest) {
+        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(createReservationRequest.memberId)
             ?: TODO("throw EntityNotFoundException()")
-        val productEntity = productRepository.findByIdOrNull(reservationCreateRequest.productId)
+        val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
             ?: TODO("throw EntityNotFoundException()")
 
 
 
-        if (reservationCreateRequest.startDate > reservationCreateRequest.endDate) {
+        if (createReservationRequest.startDate > createReservationRequest.endDate) {
             throw StartDateLessThanEndDateException(ReservationErrorCode.START_DATE_LESS_THAN_END_DATE)
         }
 
 
         reservationRepository.findFirstByStartDateAndEndDate(
-            reservationCreateRequest.startDate,
-            reservationCreateRequest.endDate
+            createReservationRequest.startDate,
+            createReservationRequest.endDate
         )?.run { throw AlreadyReservedDateException(ReservationErrorCode.ALREADY_RESERVED_DATE) }
 
         val totalPrice = productEntity.pricePerDay *
-                getDateDiff(reservationCreateRequest.startDate, reservationCreateRequest.endDate)
+                getDateDiff(createReservationRequest.startDate, createReservationRequest.endDate)
 
-        reservationCreateRequest
+        createReservationRequest
             .toEntity(productEntity, memberEntity, totalPrice)
             .apply { reservationRepository.save(this) }
     }
 
     @Transactional
-    fun patchReservationStatus(reservationPatchStatusRequest: ReservationPatchStatusRequest) {
-        val reservation = reservationRepository.findByIdOrNull(reservationPatchStatusRequest.reservationId!!)
+    fun patchReservationStatus(patchReservationStatusRequest: PatchReservationStatusRequest) {
+        val reservation = reservationRepository.findByIdOrNull(patchReservationStatusRequest.reservationId!!)
             ?: throw EntityNotFoundException(ReservationErrorCode.RESERVATION_ENTITY_NOT_FOUND)
 
-        if (reservation.member.id != reservationPatchStatusRequest.memberId
-            && reservation.product.member.id != reservationPatchStatusRequest.memberId
+        if (reservation.member.id != patchReservationStatusRequest.memberId
+            && reservation.product.member.id != patchReservationStatusRequest.memberId
         ) {
             throw TODO("throw 권한없음")
         }
 
-        reservation.reservationStatus = reservationPatchStatusRequest.reservationStatus
+        reservation.reservationStatus = patchReservationStatusRequest.reservationStatus
     }
 
     fun getProductReservations(productId: Long): List<ReservationResponse> =

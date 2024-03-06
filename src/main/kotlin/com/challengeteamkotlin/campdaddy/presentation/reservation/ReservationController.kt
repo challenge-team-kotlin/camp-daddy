@@ -1,8 +1,8 @@
 package com.challengeteamkotlin.campdaddy.presentation.reservation
 
 import com.challengeteamkotlin.campdaddy.application.reservation.ReservationService
-import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.ReservationCreateRequest
-import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.ReservationPatchStatusRequest
+import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.CreateReservationRequest
+import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.PatchReservationStatusRequest
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.response.ReservationResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,12 +17,12 @@ class ReservationController(
 
     @PostMapping
     fun createReservation(
-        @RequestBody @Valid reservationCreateRequest: ReservationCreateRequest
+        @RequestBody @Valid createReservationRequest: CreateReservationRequest
     ): ResponseEntity<Unit> {
         // TODO JWT 멤버 아이디
-        reservationCreateRequest.memberId = 1L
+        createReservationRequest.memberId = 1L
 
-        return reservationService.createReservation(reservationCreateRequest)
+        return reservationService.createReservation(createReservationRequest)
             .let {
                 ResponseEntity
                     .status(HttpStatus.CREATED)
@@ -33,10 +33,10 @@ class ReservationController(
     @PatchMapping("/{reservationId}")
     fun patchReservationStatus(
         @PathVariable reservationId: Long,
-        @RequestBody reservationPatchStatusRequest: ReservationPatchStatusRequest
+        @RequestBody patchReservationStatusRequest: PatchReservationStatusRequest
     ): ResponseEntity<Unit> {
-        reservationPatchStatusRequest.reservationId = reservationId
-        return reservationService.patchReservationStatus(reservationPatchStatusRequest)
+        patchReservationStatusRequest.reservationId = reservationId
+        return reservationService.patchReservationStatus(patchReservationStatusRequest)
             .run {
                 ResponseEntity
                     .status(HttpStatus.OK)

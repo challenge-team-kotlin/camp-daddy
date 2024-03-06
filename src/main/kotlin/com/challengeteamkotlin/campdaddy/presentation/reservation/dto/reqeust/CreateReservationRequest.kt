@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
 
-data class ReservationCreateRequest(
+data class CreateReservationRequest(
     @NotNull
     val productId: Long,
     @DateTimeFormat(pattern = "yyyy-MM-dd")
