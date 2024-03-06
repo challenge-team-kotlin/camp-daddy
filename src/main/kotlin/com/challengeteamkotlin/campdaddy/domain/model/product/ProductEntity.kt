@@ -8,7 +8,7 @@ import org.hibernate.annotations.SQLDelete
 
 @Entity
 @Table(name = "products")
-@SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE id = ?")
 class ProductEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -16,7 +16,7 @@ class ProductEntity(
     val member: MemberEntity,
 
     @Column(name = "price_per_day", nullable = false)
-    val pricePerDay: Long,
+    val pricePerDay: Int,
 
     @Column(name = "title", nullable = false)
     var title: String,
@@ -44,7 +44,7 @@ class ProductEntity(
         mutableReviews.add(review)
     }
 
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
     protected val mutableImages: MutableList<ProductImageEntity> = mutableListOf()
     val images: List<ProductImageEntity>
         get() = mutableImages.toList()
