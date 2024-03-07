@@ -46,10 +46,11 @@ class ReviewService(
 
         createReviewRequest
             .of(productEntity, memberEntity)
-            .run {
+            .apply {
                 createReviewRequest.imageUrls!!
                     .map { ReviewImageEntity(this, it) }
                     .forEach { this.uploadImage(it) }
+            }.run {
                 reviewRepository.save(this)
             }
     }

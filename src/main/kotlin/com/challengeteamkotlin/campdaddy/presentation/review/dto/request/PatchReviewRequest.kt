@@ -7,13 +7,13 @@ import jakarta.validation.constraints.NotEmpty
 import org.jetbrains.annotations.NotNull
 
 data class PatchReviewRequest(
-    @NotNull
-    @NotEmpty
+    @field:NotNull
+    @field:NotEmpty
     val content: String,
 
-    @NotNull
-    @Min(0)
-    @Max(5)
+    @field:NotNull
+    @field:Min(0)
+    @field:Max(5)
     val score: Int,
 
     val reviewImageUrls: List<String> = emptyList()
