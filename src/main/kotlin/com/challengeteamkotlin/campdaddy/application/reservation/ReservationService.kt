@@ -2,7 +2,7 @@ package com.challengeteamkotlin.campdaddy.application.reservation
 
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.AlreadyReservedDateException
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.ReservationErrorCode
-import com.challengeteamkotlin.campdaddy.application.reservation.exception.StartDateLessThanEndDateException
+import com.challengeteamkotlin.campdaddy.application.reservation.exception.EndDateLessThanStartDateException
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
@@ -31,8 +31,9 @@ class ReservationService(
         val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
             ?: TODO("throw EntityNotFoundException()")
 
-        if (createReservationRequest.startDate lessThan createReservationRequest.endDate) {
-            throw StartDateLessThanEndDateException(ReservationErrorCode.START_DATE_LESS_THAN_END_DATE)
+
+        if (createReservationRequest.endDate lessThan createReservationRequest.startDate) {
+            throw EndDateLessThanStartDateException(ReservationErrorCode.END_DATE_LESS_THAN_START_DATE)
         }
 
         if (checkAlreadyReserved(
@@ -97,7 +98,7 @@ class ReservationService(
     }
 
     private infix fun LocalDate.lessThan(anotherDate: LocalDate): Boolean {
-        return this > anotherDate
+        return this < anotherDate
     }
 
 }
