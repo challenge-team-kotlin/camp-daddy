@@ -45,7 +45,7 @@ class ReservationService(
                 getDateDiff(createReservationRequest.startDate, createReservationRequest.endDate)
 
         createReservationRequest
-            .toEntity(productEntity, memberEntity, totalPrice)
+            .of(productEntity, memberEntity, totalPrice)
             .apply { reservationRepository.save(this) }
     }
 

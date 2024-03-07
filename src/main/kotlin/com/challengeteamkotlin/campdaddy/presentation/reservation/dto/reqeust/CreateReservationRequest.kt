@@ -19,7 +19,7 @@ data class CreateReservationRequest(
 ) {
     @JsonIgnore
     var memberId: Long? = null
-    fun toEntity(productEntity: ProductEntity, memberEntity: MemberEntity, totalPrice: Long): ReservationEntity {
+    fun of(productEntity: ProductEntity, memberEntity: MemberEntity, totalPrice: Long): ReservationEntity {
         return ReservationEntity(
             startDate = startDate,
             endDate = endDate,
