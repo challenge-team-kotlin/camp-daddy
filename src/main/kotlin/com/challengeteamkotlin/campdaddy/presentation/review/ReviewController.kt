@@ -67,7 +67,7 @@ class ReviewController(
             }
     }
 
-    @GetMapping("/mine")
+    @GetMapping("/me")
     fun getMemberReviews(
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<List<ReviewResponse>> {
