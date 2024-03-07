@@ -1,8 +1,8 @@
 package com.challengeteamkotlin.campdaddy.presentation.member
 
 import com.challengeteamkotlin.campdaddy.application.member.MemberService
-import com.challengeteamkotlin.campdaddy.application.member.exception.AccessDeniedException
-import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.common.exception.CustomException
+import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
 import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
@@ -37,7 +37,7 @@ class MemberController(
         if (memberId == userPrincipal.id) {
             memberService.updateProfile(memberId, request)
         } else {
-            throw AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+            throw CustomException(CommonErrorCode.ACCESS_DENIED)
         }
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -53,7 +53,7 @@ class MemberController(
         if (memberId == userPrincipal.id) {
             memberService.deleteMember(memberId)
         } else {
-            throw AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+            throw CustomException(CommonErrorCode.ACCESS_DENIED)
         }
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)

@@ -15,7 +15,7 @@ class MemberService(
 ) {
    private fun getProfile(memberId: Long): MemberResponse {
         return memberRepository.findByIdOrNull(memberId)?.let { MemberResponse.from(it) }
-            ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
+            ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
     }
 
     fun findById(memberId: Long): MemberResponse {
@@ -24,14 +24,14 @@ class MemberService(
 
     @Transactional
     fun updateProfile(memberId: Long, request: UpdateProfileRequest) {
-        val profile = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
+        val profile = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
         profile.toUpdate(request)
         memberRepository.save(profile)
     }
 
     @Transactional
     fun deleteMember(memberId: Long) {
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
         memberRepository.delete(member)
     }
 

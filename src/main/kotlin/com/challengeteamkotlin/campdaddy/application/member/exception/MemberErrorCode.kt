@@ -8,7 +8,9 @@ enum class MemberErrorCode(
     override val status: HttpStatus,
     override val errorMessage: String,
 ) : ErrorCode {
-    ACCESS_DENIED(1000, HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    ACCESS_TOKEN_RETRIEVAL_FAILURE(1000, HttpStatus.FORBIDDEN, "AccessToken 조회 실패"),
+    USER_INFO_RETRIEVAL_FAILURE(1001, HttpStatus.FORBIDDEN, "UserInfo 조회 실패"),
+
     ;
 
 

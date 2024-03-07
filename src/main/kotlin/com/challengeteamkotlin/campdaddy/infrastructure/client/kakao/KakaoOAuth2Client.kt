@@ -1,5 +1,7 @@
 package com.challengeteamkotlin.campdaddy.infrastructure.client.kakao
 
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.application.member.exception.RetrievalFailureException
 import com.challengeteamkotlin.campdaddy.infrastructure.client.properties.KakaoProviderProperties
 import com.challengeteamkotlin.campdaddy.infrastructure.client.properties.KakaoRegistrationProperties
 import com.challengeteamkotlin.campdaddy.presentation.auth.dto.response.KakaoTokenResponse
@@ -39,7 +41,7 @@ class KakaoOAuth2Client(
             .retrieve()
             .body<KakaoTokenResponse>()
             ?.accessToken
-            ?: throw RuntimeException("AccessToken 조회 실패")
+            ?: throw RetrievalFailureException(MemberErrorCode.ACCESS_TOKEN_RETRIEVAL_FAILURE)
     }
 
     fun retrieveUserInfo(accessToken: String): KakaoUserInfoResponse {
@@ -48,6 +50,6 @@ class KakaoOAuth2Client(
             .header("Authorization", "Bearer $accessToken")
             .retrieve()
             .body<KakaoUserInfoResponse>()
-            ?: throw RuntimeException("UserInfo 조회 실패")
+            ?: throw RetrievalFailureException(MemberErrorCode.USER_INFO_RETRIEVAL_FAILURE)
     }
 }
