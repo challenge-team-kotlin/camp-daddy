@@ -18,9 +18,9 @@ spring:
 
 auth:
   jwt:
-    issuer: ${{JWT_ISSUER}}
-    secret: ${{JWT_SECRET}}
-    accessTokenExpirationHour: ${{JWT_ACCESS_EXPIRATION_HOUR}}
+    issuer: ${JWT_ISSUER}
+    secret: ${JWT_SECRET}
+    accessTokenExpirationHour: ${JWT_ACCESS_EXPIRATION_HOUR}
 
 oauth2:
   client:
@@ -32,9 +32,9 @@ oauth2:
         user_name_attribute: id
     registration:
       kakao:
-        client_id: ${{KAKAO_CLIENT_ID}}
-        client_secret: ${{KAKAO_CLIENT_SECRET}}
+        client_id: ${KAKAO_CLIENT_ID}
+        client_secret: ${KAKAO_CLIENT_SECRET}
         client_authentication_method: client_secret_post
-        redirect_url: ${{KAKAO_REDIRECT_URL}}
+        redirect_url: ${KAKAO_REDIRECT_URL}
         authorization_grant_type: authorization_code
 
