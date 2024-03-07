@@ -1,8 +1,8 @@
 package com.challengeteamkotlin.campdaddy.fixture.reservation
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 object DateTimeFixture {
-    val today: LocalDateTime = LocalDateTime.now()
-    val tomorrow: LocalDateTime = LocalDateTime.now().plusDays(1)
+    val today: LocalDate = LocalDate.now()
+    val tomorrow: LocalDate = LocalDate.now().plusDays(1)
 }
