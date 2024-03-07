@@ -7,22 +7,29 @@ import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateP
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
-    fun getProfile(memberId: Long): MemberResponse {
+   private fun getProfile(memberId: Long): MemberResponse {
         return memberRepository.findByIdOrNull(memberId)?.let { MemberResponse.from(it) }
             ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
     }
 
+    fun findById(memberId: Long): MemberResponse {
+        return getProfile(memberId)
+    }
+
+    @Transactional
     fun updateProfile(memberId: Long, request: UpdateProfileRequest) {
         val profile = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         profile.toUpdate(request)
         memberRepository.save(profile)
     }
 
+    @Transactional
     fun deleteMember(memberId: Long) {
         val member = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         memberRepository.delete(member)

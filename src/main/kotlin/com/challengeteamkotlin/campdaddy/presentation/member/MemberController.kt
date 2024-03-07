@@ -21,9 +21,10 @@ class MemberController(
     fun getProfile(
         @PathVariable memberId: Long
     ): ResponseEntity<MemberResponse> {
+        val response = memberService.findById(memberId)
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(memberService.getProfile(memberId))
+            .body(response)
     }
 
     @Operation(summary = "프로필 수정")
