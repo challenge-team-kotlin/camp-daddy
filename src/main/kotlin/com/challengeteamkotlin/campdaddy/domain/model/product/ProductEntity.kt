@@ -44,7 +44,7 @@ class ProductEntity(
         mutableReviews.add(review)
     }
 
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = false)
     protected val mutableImages: MutableList<ProductImageEntity> = mutableListOf()
     val images: List<ProductImageEntity>
         get() = mutableImages.toList()
@@ -52,5 +52,12 @@ class ProductEntity(
     fun uploadImage(productImage: ProductImageEntity) {
         mutableImages.add(productImage)
     }
+
+    fun deleteImage(productImage:ProductImageEntity){
+        mutableImages.remove(productImage)
+    }
+
+
+    //dto => entity
 
 }

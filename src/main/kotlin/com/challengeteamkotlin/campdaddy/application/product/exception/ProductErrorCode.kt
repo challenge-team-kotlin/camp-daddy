@@ -8,5 +8,7 @@ enum class ProductErrorCode(
     override val status: HttpStatus,
     override val errorMessage:String
 ): ErrorCode{
-    상품조회실패(9999,HttpStatus.BAD_REQUEST,"")
+    PRODUCT_NOT_FOUND_EXCEPTION(3001, HttpStatus.BAD_REQUEST, "상품이 조회되지 않습니다."),
+
+    ;
 }

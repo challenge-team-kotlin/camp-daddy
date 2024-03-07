@@ -17,7 +17,7 @@ class S3Service (
     private val bucket: String = "camp-daddy"
 
     fun uploadFiles(file: MultipartFile): String {
-        val fileName: String = UUID.randomUUID().toString() + "_" + file.originalFilename
+        val fileName: String = "camp/"+UUID.randomUUID().toString() + "_" + file.originalFilename
 
         checkExtensionName(fileName)
 
@@ -34,6 +34,7 @@ class S3Service (
             throw AwsException(CommonErrorCode.AWS_IMAGE_UPLOAD_FAIL)
         }
     }
+    //client imageFile 이
 
     fun deleteFile(fileName:String):Unit =
         amazonS3Client.deleteObject(DeleteObjectRequest(bucket,fileName))

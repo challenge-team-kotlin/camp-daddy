@@ -9,7 +9,7 @@ data class CreateProductRequest(
     val title:String,
     val content:String,
     val pricePerDay : Int,
-    val images:List<MultipartFile>,
+    val images:List<MultipartFile>,// client s3controller <= 이미지 요청가능하게끔 설계
     val category: String,
 
     //userInfo
