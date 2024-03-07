@@ -3,18 +3,12 @@ package com.challengeteamkotlin.campdaddy.presentation.member
 import com.challengeteamkotlin.campdaddy.application.member.MemberService
 import com.challengeteamkotlin.campdaddy.application.member.exception.AccessDeniedException
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
-import com.challengeteamkotlin.campdaddy.common.security.jwt.UserPrincipal
-import com.challengeteamkotlin.campdaddy.domain.model.member.MemberRole
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.LoginRequest
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.SignupRequest
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.LoginResponse
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
 import io.swagger.v3.oas.annotations.Operation
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -47,27 +41,6 @@ class MemberController(
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()
-    }
-
-    @Operation(summary = "회원가입")
-    @PostMapping("/signup")
-    fun signup(
-        @RequestParam memberRole: MemberRole,
-        @Valid @RequestBody request: SignupRequest
-    ): ResponseEntity<Unit> {
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(memberService.signup(memberRole, request))
-    }
-
-    @Operation(summary = "로그인")
-    @PostMapping("/login")
-    fun login(
-        @RequestBody request: LoginRequest
-    ): ResponseEntity<LoginResponse> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(memberService.login(request))
     }
 
     @Operation(summary = "회원탈퇴")

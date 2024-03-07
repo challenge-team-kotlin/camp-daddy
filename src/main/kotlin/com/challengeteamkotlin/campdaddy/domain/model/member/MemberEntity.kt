@@ -21,11 +21,11 @@ class MemberEntity(
     @Column(name = "phone_number", nullable = false, unique = true)
     var phoneNumber: String,
 
-    @Column(name = "password", nullable = false)
-    var password: String,
-
     @Enumerated(EnumType.STRING)
-    var role: MemberRole
+    val provider: MemberProvider,
+
+    @Column(name = "provider_id")
+    val providerId: String,
 
 ) : BaseEntity() {
     @Id
@@ -36,5 +36,19 @@ class MemberEntity(
     fun toUpdate(request: UpdateProfileRequest) {
         nickname = request.nickname
     }
+
+    companion object {
+        fun ofKakao(id: Long, nickname: String, email: String, phoneNumber: String, name: String): MemberEntity {
+            return MemberEntity(
+                provider = MemberProvider.KAKAO,
+                providerId = id.toString(),
+                nickname = nickname,
+                email = email,
+                name = name,
+                phoneNumber = phoneNumber
+            )
+        }
+    }
 }
+
 

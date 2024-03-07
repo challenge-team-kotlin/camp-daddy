@@ -1,5 +1,6 @@
-package com.challengeteamkotlin.campdaddy.common.security.jwt
+package com.challengeteamkotlin.campdaddy.infrastructure.jwt
 
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -45,6 +46,8 @@ class JwtAuthenticationFilter(
                     SecurityContextHolder.getContext().authentication = authentication
                 }
         }
+
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
 
         filterChain.doFilter(request, response)
     }

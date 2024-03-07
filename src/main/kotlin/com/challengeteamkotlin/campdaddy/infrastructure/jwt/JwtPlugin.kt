@@ -1,4 +1,4 @@
-package com.challengeteamkotlin.campdaddy.common.security.jwt
+package com.challengeteamkotlin.campdaddy.infrastructure.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
@@ -13,34 +13,32 @@ import java.util.*
 
 @Component
 class JwtPlugin(
-    @Value("\${auth.jwt.issuer}") private val issuer: String,
-    @Value("\${auth.jwt.secret}") private val secret: String,
-    @Value("\${auth.jwt.accessTokenExpirationHour}") private val accessTokenExpirationHour: Long,
+    private val jwtProperties: JwtProperties
 ) {
 
     fun validateToken(jwt: String): Result<Jws<Claims>> {
         return kotlin.runCatching {
-            val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
+            val key = Keys.hmacShaKeyFor(jwtProperties.secret.toByteArray(StandardCharsets.UTF_8))
             Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt)
 
         }
     }
 
-    fun generateAccessToken(subject: String, email: String, role: String): String {
-        return generateToken(subject, email, role, Duration.ofHours(accessTokenExpirationHour))
+    fun generateAccessToken(subject: String, nickname: String): String {
+        return generateToken(subject, nickname, Duration.ofHours(jwtProperties.accessTokenExpirationHour))
     }
 
-    private fun generateToken(subject: String, email: String, role: String, expirationPeriod: Duration): String {
+    private fun generateToken(subject: String, nickname: String, expirationPeriod: Duration): String {
         val claims: Claims = Jwts.claims()
-            .add(mapOf("email" to email, "role" to role))
+            .add(mapOf("nickname" to nickname))
             .build()
 
-        val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
+        val key = Keys.hmacShaKeyFor(jwtProperties.secret.toByteArray(StandardCharsets.UTF_8))
         val now = Instant.now()
 
         return Jwts.builder()
             .subject(subject)
-            .issuer(issuer)
+            .issuer(jwtProperties.issuer)
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plus(expirationPeriod)))
             .claims(claims)

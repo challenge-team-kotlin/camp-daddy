@@ -1,4 +1,4 @@
-package com.challengeteamkotlin.campdaddy.common.security.jwt
+package com.challengeteamkotlin.campdaddy.common.security
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

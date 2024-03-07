@@ -1,5 +1,6 @@
-package com.challengeteamkotlin.campdaddy.common.security.jwt
+package com.challengeteamkotlin.campdaddy.infrastructure.jwt
 
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 

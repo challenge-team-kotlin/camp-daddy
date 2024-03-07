@@ -5,14 +5,8 @@ import com.challengeteamkotlin.campdaddy.application.member.exception.EmailPassw
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
 import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
-import com.challengeteamkotlin.campdaddy.common.security.jwt.JwtPlugin
-import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
-import com.challengeteamkotlin.campdaddy.domain.model.member.MemberRole
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.LoginRequest
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.SignupRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
-import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.LoginResponse
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -21,8 +15,6 @@ import org.springframework.stereotype.Service
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
-    private val passwordEncoder: PasswordEncoder,
-    private val jwtPlugin: JwtPlugin
 ) {
     fun getProfile(memberId: Long): MemberResponse {
         return memberRepository.findByIdOrNull(memberId)?.let { MemberResponse.from(it) }
@@ -33,32 +25,6 @@ class MemberService(
         val profile = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
         profile.toUpdate(request)
         memberRepository.save(profile)
-    }
-
-    fun signup(memberRole: MemberRole, request: SignupRequest) {
-        checkedEmailOrNicknameExists(request.email, request.nickname, memberRepository)
-        memberRepository.save(
-            MemberEntity(
-                email = request.email,
-                password = passwordEncoder.encode(request.password),
-                name = request.name,
-                nickname = request.nickname,
-                phoneNumber = request.phoneNumber,
-                role = memberRole
-            )
-        )
-    }
-
-    fun login(request: LoginRequest): LoginResponse {
-        val member = memberRepository.findByEmail(request.email) ?: throw EntityNotFoundException(CommonErrorCode.VALIDATION_FAILED)
-        checkedLoginPassword(member.password, request.password, passwordEncoder)
-        return LoginResponse(
-            accessToken = jwtPlugin.generateAccessToken(
-                subject = member.id.toString(),
-                email = member.email,
-                role = member.role.name
-            )
-        )
     }
 
     fun deleteMember(memberId: Long) {
