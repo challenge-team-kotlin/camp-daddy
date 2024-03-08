@@ -14,7 +14,7 @@ class ChatRoomController(
     private val chatRoomService: ChatRoomService
 ) {
     @PostMapping
-    fun createChat(request: CreateChatRoomRequest): ResponseEntity<Unit> {
+    fun createChat(@RequestBody request: CreateChatRoomRequest): ResponseEntity<Unit> {
         val id = chatRoomService.createChat(request)
 
         return ResponseEntity.created(URI.create(String.format("/api/v1/chatroom/%d", id))).build()
