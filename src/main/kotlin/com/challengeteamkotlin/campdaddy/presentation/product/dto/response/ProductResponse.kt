@@ -3,7 +3,7 @@ package com.challengeteamkotlin.campdaddy.presentation.product.dto.response
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 
-data class CreateProductResponse(
+data class ProductResponse(
     val productId: Long,
     val memberId: Long,
     val title: String,
@@ -14,7 +14,7 @@ data class CreateProductResponse(
 ) {
     companion object {
         fun from(productEntity: ProductEntity) =
-            CreateProductResponse(
+            ProductResponse(
                 productId = productEntity.id!!,
                 memberId = productEntity.member.id!!,
                 title = productEntity.title,

@@ -15,4 +15,3 @@ spring:
     hibernate:
       ddl-auto: create
     open-in-view: false
-

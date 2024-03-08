@@ -1,31 +1,50 @@
 package com.challengeteamkotlin.campdaddy.application.product
 
+import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductImageEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductImageRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
+import com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindAllByAvailableReservationDto
 import com.challengeteamkotlin.campdaddy.infrastructure.aws.S3Service
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.CreateProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.EditProductRequest
-import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.CreateProductResponse
+import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.SearchProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.GetProductByMemberResponse
+import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.ProductResponse
+import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.SearchProductResponse
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import kotlin.jvm.Throws
+import java.time.LocalDateTime
 
 @Service
 class ProductService(
     private val memberRepository: MemberRepository,
     private val productRepository:ProductRepository,
     private val productImageRepository: ProductImageRepository,
-    private val s3Service: S3Service
 ) {
 
+    init {
+
+        val member1 = MemberEntity("buyer@google.com", "buyer", "백다삼", "01012345678")
+        val member2 = MemberEntity("seller@google.com", "seller", "김다팜", "01087654321")
+        memberRepository.save(member1)
+        memberRepository.save(member2)
+
+        val lamp = ProductEntity(member1, 20000, "불이 잘 들어오는 램프", "잘 들어 옵니다.", Category.LAMPS)
+        val tent = ProductEntity(member1, 100_000, "텐트 빌려드려요", "텐트 빌려드림ㅇㅇ", Category.TENTS)
+        productRepository.save(lamp)
+        productRepository.save(tent)
+
+    }
     @Transactional
-    fun createProduct(request: CreateProductRequest, memberId:Long): CreateProductResponse {
+    fun createProduct(request: CreateProductRequest, memberId:Long): ProductResponse {
         /**
          * memberId 로부터 MemberEntity 조회.
          * ProductEntity 생성.
@@ -35,36 +54,32 @@ class ProductService(
 
         return request.from(userInfo).apply{
             request.images.map {
-                ProductImageEntity(this,s3Service.uploadFiles(it)) //이러면 생성되나?
+                ProductImageEntity(this,it) //이러면 생성되나?
             }
         }.run {
             productRepository.save(this)
         }.let {
-            CreateProductResponse.from(it)
+            ProductResponse.from(it)
         }
     }
 
     @Transactional
-    fun editProduct(request: EditProductRequest, memberId: Long):CreateProductRequest{
-        /**
-         * [토의할점 이미지 처리 어떻게 할 것인가? 동시에 처리해야하나? client가 image 업로드할때마다 해야하나?]
-         * request.productId를 통해 게시물을 조회한다.
-         * 해당 게시물의 작성자가 요청자인지 확인한다. 요청자가 아니면 throw Error
-         * 이후 변경점들을 변경한뒤 저장한다.
-         */
+    fun editProduct(request: EditProductRequest, memberId: Long): ProductResponse {
         val product = productRepository.findByIdOrNull(request.productId) ?: TODO("NotFoundException")
 
         checkAuthority(product.member.id!!, memberId)
 
         val createImageUrlList = request.imageUrls.toMutableList()
+        val deleteImageUrlList = product.images.toMutableList()
 
-        request.imageUrls.forEach {
+        request.imageUrls.forEach cImage@{
             cImageUrl ->
             product.images.forEach pImage@{
                 pImageEntity ->
                 if(cImageUrl == pImageEntity.imageUrl){
-                    createImageUrlList.remove(cImageUrl) //성능개선 필요 현재 index가 아니라 N만큼 추가됌.
-                    return@pImage
+                    createImageUrlList.remove(cImageUrl)
+                    deleteImageUrlList.remove(pImageEntity)
+                    return@cImage
                 }
             }
         }
@@ -73,7 +88,13 @@ class ProductService(
             product.uploadImage(ProductImageEntity(product,it))
         }
 
+        deleteImageUrlList.map {
+            product.deleteImage(it)
+        }
+
         productRepository.save(product)
+
+        return ProductResponse.from(product)
     }
 
     @Transactional
@@ -92,17 +113,23 @@ class ProductService(
         } ?: TODO("NotFoundException")
     }
 
-    fun getProductList(){
+    @Transactional
+    fun getProductDetail(productId:Long):ProductResponse =
+        productRepository.findByIdOrNull(productId)?.let {
+            ProductResponse.from(it)
+        } ?: TODO("NotFoundException")
 
+
+    @Transactional
+    fun getProductList(request: SearchProductRequest,pageable: Pageable):Page<List<FindAllByAvailableReservationDto> >{
+        //페이지 객체 생성.
+        return productRepository.findAllByAvailableReservation(request.startDate,request.endDate,pageable)
     }
 
-    fun getMemberProductList(memberId:Long): GetProductByMemberResponse =
-        /**
-         * "SELECT * FROM products WHERE member_id = ?"
-         * dto로 변환.
-         */
+    @Transactional
+    fun getMemberProductList(memberId:Long): List<GetProductByMemberResponse> =
         productRepository.findByMemberId(memberId).map {
-            GetProductByMemberResponse(it)
+            GetProductByMemberResponse.from(it)
         }
 
 

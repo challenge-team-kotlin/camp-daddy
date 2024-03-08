@@ -34,13 +34,12 @@ class S3Service (
             throw AwsException(CommonErrorCode.AWS_IMAGE_UPLOAD_FAIL)
         }
     }
-    //client imageFile 이
 
     fun deleteFile(fileName:String):Unit =
         amazonS3Client.deleteObject(DeleteObjectRequest(bucket,fileName))
 
 
-    private fun checkExtensionName(originalFileName:String) =
+    fun checkExtensionName(originalFileName:String) =
         originalFileName.split(".").let {
             check(it.contains("jpg") or it.contains("jpeg") or it.contains("png")){
                 throw AwsException(CommonErrorCode.AWS_IMAGE_NAME_FAIL)

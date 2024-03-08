@@ -8,7 +8,7 @@ import org.hibernate.annotations.SQLDelete
 
 @Entity
 @Table(name = "products")
-@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id = ?")
 class ProductEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -8,16 +8,14 @@ data class GetProductByMemberResponse(
         val presentationImage:String,
         val createdAt:LocalDateTime,
         val title:String,
-        val likeCount:Int
         ) {
         companion object{
-                fun of(productEntity: ProductEntity, likeCount:Int):GetProductByMemberResponse{
+                fun from(productEntity: ProductEntity):GetProductByMemberResponse{
                         return GetProductByMemberResponse(
                                 productId = productEntity.id!!,
                                 title = productEntity.title,
                                 createdAt = productEntity.createdAt,
                                 presentationImage = productEntity.images[0].imageUrl,
-                                likeCount = likeCount
                         )
                 }
         }

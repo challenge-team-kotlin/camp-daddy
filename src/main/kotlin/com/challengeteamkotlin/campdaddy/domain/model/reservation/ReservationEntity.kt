@@ -5,17 +5,17 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Entity
 @Table(name = "reservations")
 @SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
 class ReservationEntity(
     @Column(name = "start_date", nullable = false)
-    val startDate: LocalDateTime,
+    val startDate: LocalDate,
 
     @Column(name = "end_date", nullable = false)
-    val endDate: LocalDateTime,
+    val endDate: LocalDate,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
