@@ -25,7 +25,7 @@ class ChatMessageService(
         val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
 
         if (chatRoom.buyer != sender && chatRoom.seller != sender) {
-            throw throw ChatFailureException(ChatErrorCode.ACCESS_DENIED)
+            throw ChatFailureException(ChatErrorCode.ACCESS_DENIED)
         }
 
         val message = request.of(sender, chatRoom)
