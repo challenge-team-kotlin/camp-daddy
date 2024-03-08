@@ -1,8 +1,6 @@
 package com.challengeteamkotlin.campdaddy.presentation.member
 
 import com.challengeteamkotlin.campdaddy.application.member.MemberService
-import com.challengeteamkotlin.campdaddy.common.exception.CustomException
-import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
 import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
@@ -34,11 +32,7 @@ class MemberController(
         @RequestBody request: UpdateProfileRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        if (memberId == userPrincipal.id) {
-            memberService.updateProfile(memberId, request)
-        } else {
-            throw CustomException(CommonErrorCode.ACCESS_DENIED)
-        }
+        memberService.updateProfile(memberId, request, userPrincipal)
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()
@@ -50,11 +44,7 @@ class MemberController(
         @PathVariable memberId: Long,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Any> {
-        if (memberId == userPrincipal.id) {
-            memberService.deleteMember(memberId)
-        } else {
-            throw CustomException(CommonErrorCode.ACCESS_DENIED)
-        }
+        memberService.deleteMember(memberId, userPrincipal)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body("회원탈퇴 완료했습니다.")

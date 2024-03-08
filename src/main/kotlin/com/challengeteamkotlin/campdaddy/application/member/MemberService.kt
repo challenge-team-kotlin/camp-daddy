@@ -1,7 +1,10 @@
 package com.challengeteamkotlin.campdaddy.application.member
 
+import com.challengeteamkotlin.campdaddy.application.member.exception.AccessDeniedException
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
-import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
+import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
@@ -13,26 +16,32 @@ import org.springframework.transaction.annotation.Transactional
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
-   private fun getProfile(memberId: Long): MemberResponse {
-        return memberRepository.findByIdOrNull(memberId)?.let { MemberResponse.from(it) }
-            ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
-    }
 
     fun findById(memberId: Long): MemberResponse {
-        return getProfile(memberId)
+        return MemberResponse.from(getProfile(memberId))
     }
 
     @Transactional
-    fun updateProfile(memberId: Long, request: UpdateProfileRequest) {
-        val profile = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
+    fun updateProfile(memberId: Long, request: UpdateProfileRequest, userPrincipal: UserPrincipal) {
+        validateSameMember(memberId, userPrincipal.id)
+        val profile = getProfile(memberId)
         profile.toUpdate(request)
         memberRepository.save(profile)
     }
 
     @Transactional
-    fun deleteMember(memberId: Long) {
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
+    fun deleteMember(memberId: Long, userPrincipal: UserPrincipal) {
+        validateSameMember(memberId, userPrincipal.id)
+        val member = getProfile(memberId)
         memberRepository.delete(member)
     }
 
+    private fun getProfile(memberId: Long): MemberEntity {
+        return memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
+    }
+
+    private fun validateSameMember(memberId: Long, targetId: Long) {
+        if (memberId != targetId) throw AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+    }
 }
