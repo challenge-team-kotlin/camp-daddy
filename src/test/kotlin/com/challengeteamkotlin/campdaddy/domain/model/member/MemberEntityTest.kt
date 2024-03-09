@@ -16,6 +16,7 @@ class MemberEntityTest : BehaviorSpec({
                 testPerson.phoneNumber shouldBe "010-1234-1234"
                 testPerson.provider shouldBe MemberProvider.KAKAO
                 testPerson.providerId shouldBe "1234"
+
             }
         }
     }
