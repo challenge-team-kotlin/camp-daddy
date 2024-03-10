@@ -1,6 +1,6 @@
 package com.challengeteamkotlin.campdaddy.domain.model.member
 
-import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.testPerson
+import com.challengeteamkotlin.campdaddy.fixture.member.MemberFixture.testPerson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
