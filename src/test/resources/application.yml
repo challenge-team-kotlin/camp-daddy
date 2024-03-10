@@ -16,6 +16,14 @@ spring:
       ddl-auto: create-drop
     open-in-view: false
 
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+
 auth:
   jwt:
     issuer: ${JWT_ISSUER}
