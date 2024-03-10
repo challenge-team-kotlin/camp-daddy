@@ -1,6 +1,7 @@
 package com.challengeteamkotlin.campdaddy.presentation.product
 
 import com.challengeteamkotlin.campdaddy.application.product.ProductService
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.CreateProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.EditProductRequest
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,24 +33,24 @@ class ProductController(
     @PostMapping()
     fun createProduct(
         @RequestBody createProductRequest: CreateProductRequest,
-        @RequestParam memberId: Long
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
     ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(createProductRequest, memberId))
+        ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(createProductRequest, userPrincipal.id))
 
     @PutMapping()
     fun editProduct(
         @RequestBody editProductRequest: EditProductRequest,
-        @RequestParam memberId: Long
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
     ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, memberId))
+        ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, userPrincipal.id))
 
 
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @PathVariable productId: Long,
-        @RequestParam memberId: Long
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
     ):ResponseEntity<Unit> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId, memberId ))
+        ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId, userPrincipal.id))
 
 
     @GetMapping()

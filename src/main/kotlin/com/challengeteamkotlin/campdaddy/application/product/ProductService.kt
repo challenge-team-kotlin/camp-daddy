@@ -1,5 +1,7 @@
 package com.challengeteamkotlin.campdaddy.application.product
 
+import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
+import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
@@ -26,8 +28,6 @@ import java.time.LocalDate
 class ProductService(
     private val memberRepository: MemberRepository,
     private val productRepository:ProductRepository,
-    private val productImageRepository: ProductImageRepository,
-    private val reservationRepository: ReservationRepository,
 ) {
 
     @Transactional
@@ -37,7 +37,7 @@ class ProductService(
          * ProductEntity 생성.
          * Response반환.
          */
-        val userInfo = memberRepository.findByIdOrNull(memberId) ?: TODO("throw EntityNotFound")
+        val userInfo = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return request.from(userInfo).apply{
             request.images.map {
@@ -52,7 +52,7 @@ class ProductService(
 
     @Transactional
     fun editProduct(request: EditProductRequest, memberId: Long): ProductResponse {
-        val product = productRepository.findByIdOrNull(request.productId) ?: TODO("NotFoundException")
+        val product = productRepository.findByIdOrNull(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         checkAuthority(product.member.id!!, memberId)
 
@@ -89,14 +89,14 @@ class ProductService(
         productRepository.findByIdOrNull(productId)?.run {
             checkAuthority(memberId,this.member.id!!)
             productRepository.delete(this)
-        } ?: TODO("NotFoundException")
+        } ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
     }
 
     @Transactional
     fun getProductDetail(productId:Long):ProductResponse =
         productRepository.findByIdOrNull(productId)?.let {
             ProductResponse.from(it)
-        } ?: TODO("NotFoundException")
+        } ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
 
     @Transactional

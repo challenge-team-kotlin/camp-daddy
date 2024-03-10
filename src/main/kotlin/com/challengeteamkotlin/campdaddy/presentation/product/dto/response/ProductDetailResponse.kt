@@ -6,7 +6,7 @@ data class ProductDetailResponse(
     val title: String,
     val images: String,
     val content: String,
-    val pricePerDay: Long,
+    val pricePerDay: Int,
 ) {
     companion object {
         fun from(productEntity: ProductEntity) = ProductDetailResponse(

@@ -12,8 +12,6 @@ data class CreateProductRequest(
     val images:List<String>,
     val category: String,
 
-    //userInfo
-    val memberId:Long,
 ){
     fun from(member:MemberEntity):ProductEntity{
         return ProductEntity(
