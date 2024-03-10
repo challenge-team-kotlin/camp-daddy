@@ -2,15 +2,13 @@ package com.challengeteamkotlin.campdaddy.presentation.product
 
 import com.challengeteamkotlin.campdaddy.application.product.ProductService
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
-import com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindAllByAvailableReservationDto
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.CreateProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.EditProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.SearchProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.GetProductByMemberResponse
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.ProductResponse
-import kotlinx.coroutines.processNextEventInCurrentThread
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -57,18 +55,15 @@ class ProductController(
     fun getProductList(
         @RequestParam startDate: LocalDate,
         @RequestParam endDate: LocalDate,
-        @RequestParam preferRegion :String,
         @RequestParam category: Category,
         @RequestParam filterReservation: Boolean,
-        @RequestParam lastProductId:Long,
-        @RequestParam size :Int,
-        @RequestParam page : Int,
-    ):ResponseEntity<Page<List<FindAllByAvailableReservationDto>>> {
-
+        @RequestParam search:String?,
+        @RequestParam page:Int,
+    ):ResponseEntity<Slice<*>>{
         val searchProductRequest = SearchProductRequest(
-            startDate,endDate,preferRegion,category,filterReservation,lastProductId
+            startDate,endDate,category,filterReservation, search,
         )
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductList(searchProductRequest,PageRequest.of(page,size)))
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductList(searchProductRequest,PageRequest.of(page,10)))
     }
 
     @GetMapping("/{productId}")

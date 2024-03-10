@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "reservations")
-@SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE reservation SET is_deleted = true WHERE id = ?")
 class ReservationEntity(
     @Column(name = "start_date", nullable = false)
     val startDate: LocalDate,

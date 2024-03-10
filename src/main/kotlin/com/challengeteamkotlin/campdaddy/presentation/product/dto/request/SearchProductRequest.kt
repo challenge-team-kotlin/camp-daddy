@@ -4,10 +4,9 @@ import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import java.time.LocalDate
 
 data class SearchProductRequest(
-    var startDate:LocalDate,
-    var endDate: LocalDate,
-    var preferRegion :String,
-    var category:Category,
-    var filterReservation: Boolean,
-    var lastProductId:Long
+    val startDate:LocalDate,
+    val endDate: LocalDate,
+    val category:Category,
+    val filterReservation : Boolean,
+    val search : String?,
 )

@@ -4,45 +4,32 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductImageEntity
+import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationEntity
+import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductImageRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
-import com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindAllByAvailableReservationDto
-import com.challengeteamkotlin.campdaddy.infrastructure.aws.S3Service
+import com.challengeteamkotlin.campdaddy.domain.repository.reservation.ReservationRepository
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.CreateProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.EditProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.SearchProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.GetProductByMemberResponse
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.ProductResponse
-import com.challengeteamkotlin.campdaddy.presentation.product.dto.response.SearchProductResponse
 import jakarta.transaction.Transactional
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Service
 class ProductService(
     private val memberRepository: MemberRepository,
     private val productRepository:ProductRepository,
     private val productImageRepository: ProductImageRepository,
+    private val reservationRepository: ReservationRepository,
 ) {
 
-    init {
-
-        val member1 = MemberEntity("buyer@google.com", "buyer", "백다삼", "01012345678")
-        val member2 = MemberEntity("seller@google.com", "seller", "김다팜", "01087654321")
-        memberRepository.save(member1)
-        memberRepository.save(member2)
-
-        val lamp = ProductEntity(member1, 20000, "불이 잘 들어오는 램프", "잘 들어 옵니다.", Category.LAMPS)
-        val tent = ProductEntity(member1, 100_000, "텐트 빌려드려요", "텐트 빌려드림ㅇㅇ", Category.TENTS)
-        productRepository.save(lamp)
-        productRepository.save(tent)
-
-    }
     @Transactional
     fun createProduct(request: CreateProductRequest, memberId:Long): ProductResponse {
         /**
@@ -99,14 +86,6 @@ class ProductService(
 
     @Transactional
     fun deleteProduct(productId : Long,memberId: Long){
-        /**
-         * product는 소프트 델리트 되어야한다.
-         * 이때 product_image에는 변경이 있어서는 안된다.
-         *
-         * 1. productId를 통해 Entity를 가져온다.
-         * 2. 1.에서 가져온 Entity에서 MemberId와 요청한 MemberId를 비교하여 수정자가 작성자인지 확인한다.
-         * 3. delete를 진행한다.
-         */
         productRepository.findByIdOrNull(productId)?.run {
             checkAuthority(memberId,this.member.id!!)
             productRepository.delete(this)
@@ -121,9 +100,39 @@ class ProductService(
 
 
     @Transactional
-    fun getProductList(request: SearchProductRequest,pageable: Pageable):Page<List<FindAllByAvailableReservationDto> >{
-        //페이지 객체 생성.
-        return productRepository.findAllByAvailableReservation(request.startDate,request.endDate,pageable)
+    fun getProductList(request: SearchProductRequest,pageable: Pageable):Slice<*> {
+        if(request.search != null) {
+            return if(request.filterReservation) productRepository.findBySearchableAndReservationFilter(
+                        startDate = request.startDate,
+                        endDate = request.endDate,
+                        category = request.category,
+                        search = request.search,
+                        pageable = pageable,
+                ) else productRepository.findBySearchableAndReservation(
+                    startDate = request.startDate,
+                    endDate = request.endDate,
+                    category = request.category,
+                    search = request.search,
+                    pageable = pageable,
+                )
+
+        }else if(request.filterReservation){
+            //검색어가 제공되지않고 모든 상품을 조회할때.
+            return productRepository.findByReservationFilter(
+                    startDate = request.startDate,
+                    endDate = request.endDate,
+                    category = request.category,
+                    pageable = pageable
+            )
+        }else{
+            //검색어가 제공되지않고 모든 상품을 볼때
+            return productRepository.findByReservation(
+                    startDate = request.startDate,
+                    endDate = request.endDate,
+                    category = request.category,
+                    pageable = pageable
+            )
+        }
     }
 
     @Transactional
