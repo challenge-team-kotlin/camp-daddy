@@ -32,12 +32,12 @@ class ReviewService(
 
 
     @Transactional
-    fun createReview(createReviewRequest: CreateReviewRequest) {
-        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(createReviewRequest.memberId)
+    fun createReview(memberId: Long, createReviewRequest: CreateReviewRequest) {
+        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(memberId)
             ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
 
         val productEntity = productRepository.findByIdOrNull(createReviewRequest.productId)
-            // TODO Product Entity Not Found Exception
+        // TODO Product Entity Not Found Exception
             ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
 
         if (!checkBoughtBefore(productEntity.id!!, memberEntity.id!!)) {
@@ -60,14 +60,13 @@ class ReviewService(
     }
 
     @Transactional
-    fun patchReview(patchReviewRequest: PatchReviewRequest) {
-        val member: MemberEntity = memberRepository.findByIdOrNull(patchReviewRequest.memberId)
+    fun patchReview(memberId: Long, reviewId: Long, patchReviewRequest: PatchReviewRequest) {
+        val member: MemberEntity = memberRepository.findByIdOrNull(memberId)
             ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
-        val review: ReviewEntity = reviewRepository.findByIdOrNull(patchReviewRequest.reviewId)
-            // TODO Product Entity Not Found Exception
-            ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
+        val review: ReviewEntity = reviewRepository.findByIdOrNull(reviewId)
+            ?: throw EntityNotFoundException(ReviewErrorCode.REVIEW_ENTITY_NOT_FOUND)
 
-        if (member.id != patchReviewRequest.memberId) {
+        if (member.id != memberId) {
             throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_AUTHORITY)
         }
 
@@ -99,7 +98,7 @@ class ReviewService(
     @Transactional(readOnly = true)
     fun getProductReviews(getProductsReviewRequest: GetProductsReviewRequest): List<ReviewResponse> {
         val product = productRepository.findByIdOrNull(getProductsReviewRequest.productId)
-            // TODO Product Entity Not Found Exception
+        // TODO Product Entity Not Found Exception
             ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
 
         return reviewRepository

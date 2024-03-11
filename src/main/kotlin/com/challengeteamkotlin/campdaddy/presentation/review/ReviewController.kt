@@ -24,15 +24,11 @@ class ReviewController(
         @RequestBody @Valid createReviewRequest: CreateReviewRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        createReviewRequest.memberId = userPrincipal.id
-        createReviewRequest.imageUrls ?: emptyList()
-
-        return reviewService.createReview(createReviewRequest)
-            .let {
-                ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .build()
-            }
+        return reviewService.createReview(memberId = userPrincipal.id, createReviewRequest).let {
+            ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build()
+        }
     }
 
     @PatchMapping("/{reviewId}")
@@ -41,15 +37,14 @@ class ReviewController(
         @RequestBody @Valid patchReviewRequest: PatchReviewRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        patchReviewRequest.memberId = userPrincipal.id
-        patchReviewRequest.reviewId = reviewId
 
-        return reviewService.patchReview(patchReviewRequest)
-            .run {
-                ResponseEntity
-                    .status(HttpStatus.OK)
-                    .build()
-            }
+        return reviewService.patchReview(
+            memberId = userPrincipal.id, reviewId = reviewId, patchReviewRequest
+        ).run {
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .build()
+        }
     }
 
     @GetMapping("/products/{productId}")
@@ -57,14 +52,15 @@ class ReviewController(
         @PathVariable productId: Long,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<List<ReviewResponse>> {
-        val getProductsReviewRequest = GetProductsReviewRequest(productId, userPrincipal.id)
-
-        return reviewService.getProductReviews(getProductsReviewRequest)
-            .let {
-                ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(it)
-            }
+        return reviewService.getProductReviews(
+            GetProductsReviewRequest(
+                productId = productId, memberId = userPrincipal.id
+            )
+        ).let {
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .body(it)
+        }
     }
 
     @GetMapping("/me")

@@ -1,6 +1,5 @@
 package com.challengeteamkotlin.campdaddy.presentation.review.dto.request
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty
@@ -18,10 +17,4 @@ data class PatchReviewRequest(
 
     val reviewImageUrls: List<String> = emptyList()
 
-) {
-    @JsonIgnore
-    var reviewId: Long? = null
-
-    @JsonIgnore
-    var memberId: Long? = null
-}
+)

@@ -19,11 +19,9 @@ data class CreateReviewRequest(
         @field:Max(5)
         val score: Int,
 
-        val imageUrls: List<String>?
+        val imageUrls: List<String>? = emptyList()
 
 ) {
-    @JsonIgnore
-    var memberId: Long? = null
 
     fun of(productEntity: ProductEntity, memberEntity: MemberEntity): ReviewEntity {
         return ReviewEntity(
