@@ -37,7 +37,6 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-
       - name: Gradle 권한 부여
         run: chmod +x gradlew
 
@@ -59,9 +58,9 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            sudo docker stop ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} && docker rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} && docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+            sudo docker stop ${{ secrets.DOCKER_REPO }} && docker rm ${{ secrets.DOCKER_REPO }} && docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
-            sudo docker run -d -p ${{ secrets.SERVER_PORT }}:${{ secrets.SERVER_PORT }} --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --restart always ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+            sudo docker run -d -p ${{ secrets.SERVER_PORT }}:${{ secrets.SERVER_PORT }} --name ${{ secrets.DOCKER_REPO }} --restart always ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
             sudo docker image prune -f
 
       - name: 슬랙 Alarm 전송
