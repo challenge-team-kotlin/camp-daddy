@@ -101,8 +101,8 @@ dependencies {
     implementation("org.webjars:sockjs-client:1.1.2")
     implementation("org.webjars:stomp-websocket:2.3.3-1")
 
-
 }
+
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
@@ -113,4 +113,9 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// plain.jar 생성 방지
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
