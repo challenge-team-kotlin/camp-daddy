@@ -37,5 +37,5 @@ class ReservationEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id")
-    val id: Long? = null
+    var id: Long? = null
 }

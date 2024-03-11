@@ -31,7 +31,7 @@ class MemberEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    val id: Long? = null
+    var id: Long? = null
 
     fun toUpdate(request: UpdateProfileRequest) {
         nickname = request.nickname

@@ -19,6 +19,6 @@ class SiggAreaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sigg_area_id")
-    val id:Long?=null
+    var id:Long?=null
 
 }

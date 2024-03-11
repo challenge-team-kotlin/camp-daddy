@@ -14,6 +14,6 @@ class SidoAreaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sido_area_id")
-    val id: Long? = null
+    var id: Long? = null
 
 }
