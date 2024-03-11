@@ -1,5 +1,6 @@
 package com.challengeteamkotlin.campdaddy.application.member
 
+import com.challengeteamkotlin.campdaddy.application.auth.exception.AuthErrorCode
 import com.challengeteamkotlin.campdaddy.application.member.exception.AccessDeniedException
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
@@ -47,12 +48,12 @@ class MemberServiceTest(
             }
         }
         When("주어진 memberId가 특정 memberId와 틀리면") {
-            every { memberService.updateProfile(99, socialMemberRequest, userPrincipalForAccessDenied) } throws AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+            every { memberService.updateProfile(99, socialMemberRequest, userPrincipalForAccessDenied) } throws AccessDeniedException(AuthErrorCode.ACCESS_DENIED)
             Then("예외가 던져진다") {
                 val exception = shouldThrowExactly<AccessDeniedException> { memberService.updateProfile(99, socialMemberRequest, userPrincipalForAccessDenied)}
                 val errorCode = exception.errorCode
 
-                errorCode shouldBe MemberErrorCode.ACCESS_DENIED
+                errorCode shouldBe AuthErrorCode.ACCESS_DENIED
             }
         }
     }
@@ -69,12 +70,12 @@ class MemberServiceTest(
             }
         }
         When("주어진 memberId가 특정 memberId와 틀리면") {
-            every { memberService.deleteMember(any(), any()) } throws AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+            every { memberService.deleteMember(any(), any()) } throws AccessDeniedException(AuthErrorCode.ACCESS_DENIED)
             Then("예외가 던져진다") {
                 val exception = shouldThrowExactly<AccessDeniedException> { memberService.deleteMember(99, userPrincipalForDeleted)}
                 val errorCode = exception.errorCode
 
-                errorCode shouldBe MemberErrorCode.ACCESS_DENIED
+                errorCode shouldBe AuthErrorCode.ACCESS_DENIED
 
             }
         }

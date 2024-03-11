@@ -1,5 +1,6 @@
 package com.challengeteamkotlin.campdaddy.application.member
 
+import com.challengeteamkotlin.campdaddy.application.auth.exception.AuthErrorCode
 import com.challengeteamkotlin.campdaddy.application.member.exception.AccessDeniedException
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
@@ -42,6 +43,6 @@ class MemberService(
     }
 
     private fun validateSameMember(memberId: Long, targetId: Long) {
-        if (memberId != targetId) throw AccessDeniedException(MemberErrorCode.ACCESS_DENIED)
+        if (memberId != targetId) throw AccessDeniedException(AuthErrorCode.ACCESS_DENIED)
     }
 }
