@@ -17,7 +17,7 @@ jobs:
 
       - name: .env 파일 생성
         run: |
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
+          jq -r 'to_entries | map(select(.key != "AWS_SSH_KEY") | "\(.key)=\(.value|tostring)") | .[]' <<< "$SECRETS_CONTEXT" > .env
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
@@ -54,8 +54,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_HOST }}
-          username: $ {{ secrets.AWS_USERNAME }}
+          username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_SSH_KEY }}
+          envs: GITHUB_SHA
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
