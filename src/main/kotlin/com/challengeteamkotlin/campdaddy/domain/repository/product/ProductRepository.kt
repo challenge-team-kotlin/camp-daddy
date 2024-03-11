@@ -18,9 +18,6 @@ interface ProductRepository : ProductJpaRepository {
 
     fun findByMemberId(memberId:Long):List<ProductEntity>
 
-    /**
-     * search = null && startDate ~ endDate 까지 예약된 건들은 제외하고 검색.
-     */
     @Query("""
         SELECT
             new com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindByReservationFilterDto(
@@ -51,9 +48,6 @@ interface ProductRepository : ProductJpaRepository {
     """)
     fun findByReservationFilter(startDate:LocalDate, endDate: LocalDate, category: Category,pageable: Pageable):Slice<FindByReservationFilterDto>
 
-    /**
-     * search = null && startDate ~ endDate 까지 기간 내에 예약이 된 것까지 모두 포함.
-     */
     @Query("""
         SELECT 
             new com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindByReservationDto(
@@ -84,9 +78,6 @@ interface ProductRepository : ProductJpaRepository {
     """)
     fun findByReservation(startDate:LocalDate, endDate: LocalDate, category: Category,pageable: Pageable):Slice<FindByReservationDto>
 
-    /**
-     * search = !null && startDate ~ endDate 까지 조회된 건 모두 조회.
-     */
     @Query("""
                 SELECT 
             new com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindBySearchableAndReservationDto(

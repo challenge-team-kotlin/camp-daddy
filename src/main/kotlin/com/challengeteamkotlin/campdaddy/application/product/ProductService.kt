@@ -26,11 +26,6 @@ class ProductService(
 
     @Transactional
     fun createProduct(request: CreateProductRequest, memberId:Long): ProductResponse {
-        /**
-         * memberId 로부터 MemberEntity 조회.
-         * ProductEntity 생성.
-         * Response반환.
-         */
         val userInfo = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return request.from(userInfo).apply{
