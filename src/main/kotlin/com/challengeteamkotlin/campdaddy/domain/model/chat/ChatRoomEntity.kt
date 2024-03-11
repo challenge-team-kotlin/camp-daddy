@@ -25,6 +25,6 @@ class ChatRoomEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_id")
-    val id: Long? = null
+    var id: Long? = null
 
 }

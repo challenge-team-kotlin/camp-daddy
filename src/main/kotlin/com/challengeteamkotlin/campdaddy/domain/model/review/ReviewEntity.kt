@@ -28,7 +28,7 @@ class ReviewEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    val id: Long? = null
+    var id: Long? = null
 
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "review", orphanRemoval = true)
     protected val mutableImages: MutableList<ReviewImageEntity> = mutableListOf()

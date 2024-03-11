@@ -19,5 +19,5 @@ class ReviewImageEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_image_id")
-    val id: Long? = null;
+    var id: Long? = null;
 }
