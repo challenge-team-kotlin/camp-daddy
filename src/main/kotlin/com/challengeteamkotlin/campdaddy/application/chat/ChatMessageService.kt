@@ -2,8 +2,8 @@ package com.challengeteamkotlin.campdaddy.application.chat
 
 import com.challengeteamkotlin.campdaddy.application.chat.exception.ChatErrorCode
 import com.challengeteamkotlin.campdaddy.application.chat.exception.ChatFailureException
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
-import com.challengeteamkotlin.campdaddy.common.exception.code.CommonErrorCode
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatMessageRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatRoomRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
@@ -21,8 +21,8 @@ class ChatMessageService(
 
     @Transactional
     fun save(roomId: Long, request: MessageRequest): Long {
-        val sender = memberRepository.findByIdOrNull(request.userId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
-        val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(CommonErrorCode.ID_NOT_FOUND)
+        val sender = memberRepository.findByIdOrNull(request.userId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
+        val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
 
         if (chatRoom.buyer != sender && chatRoom.seller != sender) {
             throw ChatFailureException(ChatErrorCode.ACCESS_DENIED)

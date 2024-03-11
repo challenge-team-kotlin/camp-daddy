@@ -7,7 +7,7 @@ data class SearchProductResponse(
     val title:String,
     val content:String,
     val memberNickName:String,
-    val pricePerDay:Int,
+    val pricePerDay:Long,
     val imageUrl :String,
 ){
     companion object{

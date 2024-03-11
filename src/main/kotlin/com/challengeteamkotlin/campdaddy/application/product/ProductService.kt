@@ -2,16 +2,11 @@ package com.challengeteamkotlin.campdaddy.application.product
 
 import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
-import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
+import com.challengeteamkotlin.campdaddy.common.exception.UnAuthorizationException
 import com.challengeteamkotlin.campdaddy.domain.model.product.Category
-import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import com.challengeteamkotlin.campdaddy.domain.model.product.ProductImageEntity
-import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationEntity
-import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
-import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductImageRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
-import com.challengeteamkotlin.campdaddy.domain.repository.reservation.ReservationRepository
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.CreateProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.EditProductRequest
 import com.challengeteamkotlin.campdaddy.presentation.product.dto.request.SearchProductRequest
@@ -22,7 +17,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class ProductService(
@@ -51,33 +45,23 @@ class ProductService(
     }
 
     @Transactional
-    fun editProduct(request: EditProductRequest, memberId: Long): ProductResponse {
-        val product = productRepository.findByIdOrNull(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
+    fun editProduct(request: EditProductRequest,productId: Long, memberId: Long): ProductResponse {
+        val product = productRepository.findByIdOrNull(productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         checkAuthority(product.member.id!!, memberId)
 
-        val createImageUrlList = request.imageUrls.toMutableList()
-        val deleteImageUrlList = product.images.toMutableList()
+        product.category=Category.valueOf(request.category)
+        product.title=request.title
+        product.content=request.content
+        product.pricePerDay=request.price
 
-        request.imageUrls.forEach cImage@{
-            cImageUrl ->
-            product.images.forEach pImage@{
-                pImageEntity ->
-                if(cImageUrl == pImageEntity.imageUrl){
-                    createImageUrlList.remove(cImageUrl)
-                    deleteImageUrlList.remove(pImageEntity)
-                    return@cImage
-                }
-            }
-        }
+        product.images
+            .filterNot { request.imageUrls.contains(it.imageUrl) }
+            .forEach{ product.deleteImage(it)}
 
-        createImageUrlList.forEach {
-            product.uploadImage(ProductImageEntity(product,it))
-        }
-
-        deleteImageUrlList.map {
-            product.deleteImage(it)
-        }
+        request.imageUrls
+            .filterNot { product.images.map { images -> images.imageUrl }.contains(it) }
+            .forEach{product.uploadImage(ProductImageEntity(product,it))}
 
         productRepository.save(product)
 
@@ -149,6 +133,6 @@ class ProductService(
     }
 
     private fun checkAuthority(memberId: Long, checkMemberId:Long){
-        if(memberId != checkMemberId) TODO("throw Exception")
+        if(memberId != checkMemberId) throw UnAuthorizationException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
     }
 }

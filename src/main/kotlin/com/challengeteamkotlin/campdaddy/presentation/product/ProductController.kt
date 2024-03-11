@@ -37,12 +37,13 @@ class ProductController(
     ):ResponseEntity<ProductResponse> =
         ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(createProductRequest, userPrincipal.id))
 
-    @PutMapping()
+    @PutMapping("/{productId}")
     fun editProduct(
+        @RequestParam productId: Long,
         @RequestBody editProductRequest: EditProductRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, userPrincipal.id))
+        ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, productId, userPrincipal.id))
 
 
     @DeleteMapping("/{productId}")

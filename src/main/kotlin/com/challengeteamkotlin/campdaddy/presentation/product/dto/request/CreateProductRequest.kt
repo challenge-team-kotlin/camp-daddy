@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile
 data class CreateProductRequest(
     val title:String,
     val content:String,
-    val pricePerDay : Int,
+    val pricePerDay : Long,
     val images:List<String>,
     val category: String,
 

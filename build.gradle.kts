@@ -81,6 +81,8 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
     // property
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    //oauth
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

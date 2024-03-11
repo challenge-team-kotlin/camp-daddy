@@ -33,7 +33,7 @@ class ProductEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    val id: Long? = null
+    var id: Long? = null
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
     protected val mutableReviews: MutableList<ReviewEntity> = mutableListOf()

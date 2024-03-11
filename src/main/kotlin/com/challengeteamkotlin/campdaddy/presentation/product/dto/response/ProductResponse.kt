@@ -8,7 +8,7 @@ data class ProductResponse(
     val memberId: Long,
     val title: String,
     val content: String,
-    val pricePerDay: Int,
+    val pricePerDay: Long,
     val imageUrl: List<String>,
     val category: Category,
 ) {
