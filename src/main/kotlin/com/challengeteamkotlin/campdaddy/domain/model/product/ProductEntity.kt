@@ -16,7 +16,7 @@ class ProductEntity(
     val member: MemberEntity,
 
     @Column(name = "price_per_day", nullable = false)
-    val pricePerDay: Int,
+    var pricePerDay: Long,
 
     @Column(name = "title", nullable = false)
     var title: String,
@@ -26,7 +26,7 @@ class ProductEntity(
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "category", nullable = false)
-    val category: Category
+    var category: Category
 
 ) : BaseEntity() {
 
