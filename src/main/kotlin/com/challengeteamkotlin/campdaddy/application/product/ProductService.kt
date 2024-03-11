@@ -30,7 +30,7 @@ class ProductService(
 
         return request.from(userInfo).apply{
             request.images.map {
-                ProductImageEntity(this,it) //이러면 생성되나?
+                ProductImageEntity(this,it)
             }
         }.run {
             productRepository.save(this)
