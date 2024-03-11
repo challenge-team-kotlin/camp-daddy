@@ -1,18 +1,15 @@
-name: Camp Daddy CI
+name: Camp Daddy CD
 
 on:
-  pull_request:
-    branches: [ main, dev ]
+  push:
+    branches:
+      - main
+      - dev
 
 jobs:
-  test:
+  deploy:
     name: 우분투 설치
     runs-on: ubuntu-latest
-
-    permissions:
-      pull-requests: write
-      checks: write
-      contents: read
 
     steps:
       - name: 레포지토리 체크아웃
@@ -40,24 +37,38 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+
       - name: Gradle 권한 부여
         run: chmod +x gradlew
 
       - name: Gradle 빌드 & 테스트 실행
         run: ./gradlew build test
 
-      - name: 테스트 결과 PR 등록
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}
+      - name: Docker 빌드 & 푸쉬
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+
+      - name: EC2 배포
+        uses: appleboy/ssh-action@master
         with:
-          files: '**/build/test-results/test/TEST-*.xml'
+          host: ${{ secrets.AWS_HOST }}
+          username: $ {{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            sudo docker run -d -p ${{ secrets.SERVER_PORT }}:${{ secrets.SERVER_PORT }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            sudo docker image prune -f
 
       - name: 슬랙 Alarm 전송
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          author_name: CI 결과 알림
+          author_name: CD 결과 알림
           fields: message, commit, author, ref, workflow, took
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
+            
