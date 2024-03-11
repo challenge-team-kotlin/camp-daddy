@@ -14,21 +14,21 @@ class ReviewImageEntityTest : BehaviorSpec({
     Given("리뷰 이미지 Entity 생성 테스트") {
         When("리뷰 이미지 Entity의 image가 빈 값이라면") {
             Then("새로운 리뷰 이미지 Entity를 만들 수 없다.") {
-                ReviewImageFixture.wrongBlankReviewImage.image shouldBe ""
+                ReviewImageFixture.wrongBlankReviewImage.imageUrl shouldBe ""
             }
         }
 
         When("리뷰 이미지 Entity의 image가 url 형식이 아니라면") {
             Then("새로운 리뷰 Entity를 만들 수 없다") {
-                ReviewImageFixture.wrongUrlReviewImage.image shouldNotMatch urlRegex.toString()
+                ReviewImageFixture.wrongUrlReviewImage.imageUrl shouldNotMatch urlRegex.toString()
             }
         }
 
         When("리뷰 이미지 Entity의 모든 형식을 만족하면") {
             val reviewImage = ReviewImageFixture.reviewImage
             Then("새로운 리뷰 Entity를 만들 수 있다.") {
-                reviewImage.image shouldNotBe ""
-                reviewImage.image shouldMatch urlRegex
+                reviewImage.imageUrl shouldNotBe ""
+                reviewImage.imageUrl shouldMatch urlRegex
             }
         }
     }
