@@ -17,8 +17,6 @@ data class CreateReservationRequest(
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     val endDate: LocalDate,
 ) {
-    @JsonIgnore
-    var memberId: Long? = null
     fun of(productEntity: ProductEntity, memberEntity: MemberEntity, totalPrice: Long): ReservationEntity {
         return ReservationEntity(
             startDate = startDate,

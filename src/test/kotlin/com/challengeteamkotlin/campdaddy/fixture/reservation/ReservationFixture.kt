@@ -7,8 +7,8 @@ import com.challengeteamkotlin.campdaddy.fixture.product.ProductFixture
 
 object ReservationFixture {
     val wrongDateReservation = ReservationEntity(
-        DateTimeFixture.tomorrow,
-        DateTimeFixture.today,
+        DateFixture.tomorrow,
+        DateFixture.today,
         10000,
         ProductFixture.tent,
         MemberFixture.buyer,
@@ -16,8 +16,8 @@ object ReservationFixture {
     )
 
     val reservation = ReservationEntity(
-        DateTimeFixture.today,
-        DateTimeFixture.tomorrow,
+        DateFixture.today,
+        DateFixture.tomorrow,
         10000,
         ProductFixture.tent,
         MemberFixture.buyer,

@@ -1,16 +1,21 @@
 package com.challengeteamkotlin.campdaddy.application.reservation
 
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.AlreadyReservedDateException
-import com.challengeteamkotlin.campdaddy.application.reservation.exception.ReservationErrorCode
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.EndDateLessThanStartDateException
+import com.challengeteamkotlin.campdaddy.application.reservation.exception.InvalidReservationPatchRequest
+import com.challengeteamkotlin.campdaddy.application.reservation.exception.ReservationErrorCode
+import com.challengeteamkotlin.campdaddy.application.reservation.handler.PatchReservationHandler
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
+import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.reservation.ReservationRepository
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.CreateReservationRequest
-import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.PatchReservationStatusRequest
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.response.ReservationResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,15 +26,17 @@ import java.time.temporal.ChronoUnit
 class ReservationService(
     private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
-    private val reservationRepository: ReservationRepository
+    private val reservationRepository: ReservationRepository,
+    private val patchReservationHandler: PatchReservationHandler
 ) {
 
     @Transactional
-    fun createReservation(createReservationRequest: CreateReservationRequest) {
-        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(createReservationRequest.memberId)
-            ?: TODO("throw EntityNotFoundException()")
+    fun createReservation(memberId: Long, createReservationRequest: CreateReservationRequest) {
+        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
         val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
-            ?: TODO("throw EntityNotFoundException()")
+        // TODO Product Error Code 변경
+            ?: TODO()
 
 
         if (createReservationRequest.endDate lessThan createReservationRequest.startDate) {
@@ -51,29 +58,31 @@ class ReservationService(
     }
 
     @Transactional
-    fun patchReservationStatus(patchReservationStatusRequest: PatchReservationStatusRequest) {
-        val reservation = reservationRepository.findByIdOrNull(patchReservationStatusRequest.reservationId!!)
+    fun patchReservationStatus(
+        reservationId: Long,
+        memberId: Long,
+        reservationStatus: ReservationStatus
+    ) {
+        val reservation = reservationRepository.findByIdOrNull(reservationId)
             ?: throw EntityNotFoundException(ReservationErrorCode.RESERVATION_ENTITY_NOT_FOUND)
 
-        if (reservation.member.id != patchReservationStatusRequest.memberId
-            && reservation.product.member.id != patchReservationStatusRequest.memberId
-        ) {
-            throw TODO("throw 권한없음")
+        if (!patchReservationHandler.checkReservationPolicy(reservation, memberId, reservationStatus)) {
+            throw InvalidReservationPatchRequest(ReservationErrorCode.INVALID_RESERVATION_PATCH_REQUEST)
         }
 
-        reservation.reservationStatus = patchReservationStatusRequest.reservationStatus
+        reservation.reservationStatus = reservationStatus
     }
 
     @Transactional(readOnly = true)
-    fun getProductReservations(productId: Long): List<ReservationResponse> =
-        reservationRepository.findByProductId(productId)?.map { ReservationResponse.from(it) }
-            ?: emptyList()
+    fun getProductReservations(productId: Long, pageNo: Int, pageSize: Int): Page<ReservationResponse> =
+        reservationRepository.findByProductId(productId, PageRequest.of(pageNo, pageSize))
+            .map { ReservationResponse.from(it) }
 
 
     @Transactional(readOnly = true)
-    fun getMemberReservations(memberId: Long): List<ReservationResponse> =
-        reservationRepository.findByMemberId(memberId)?.map { ReservationResponse.from(it) }
-            ?: emptyList()
+    fun getMemberReservations(memberId: Long, pageNo: Int, pageSize: Int): Page<ReservationResponse> =
+        reservationRepository.findByMemberId(memberId, PageRequest.of(pageNo, pageSize))
+            .map { ReservationResponse.from(it) }
 
 
     @Transactional(readOnly = true)
@@ -86,7 +95,7 @@ class ReservationService(
 
     private fun getDateDiff(startDate: LocalDate, endDate: LocalDate): Long {
         val dateDiff = ChronoUnit.DAYS.between(startDate, endDate)
-        return if(dateDiff == 0L) 1 else dateDiff
+        return if (dateDiff == 0L) 1 else dateDiff
     }
 
     private fun checkAlreadyReserved(productId: Long, startDate: LocalDate, endDate: LocalDate): Boolean {
