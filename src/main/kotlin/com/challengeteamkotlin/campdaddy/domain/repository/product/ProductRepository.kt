@@ -16,7 +16,7 @@ import java.time.LocalDate
 
 interface ProductRepository : ProductJpaRepository {
 
-    fun findByMemberId(memberId:Long):List<ProductEntity>
+    fun findByMemberId(memberId: Long): List<ProductEntity>
 
     @Query("""
         SELECT
@@ -46,7 +46,7 @@ interface ProductRepository : ProductJpaRepository {
             p.title,
             p.content
     """)
-    fun findByReservationFilter(startDate:LocalDate, endDate: LocalDate, category: Category,pageable: Pageable):Slice<FindByReservationFilterDto>
+    fun findByReservationFilter(startDate: LocalDate, endDate: LocalDate, category: Category, pageable: Pageable): Slice<FindByReservationFilterDto>
 
     @Query("""
         SELECT 
@@ -76,7 +76,7 @@ interface ProductRepository : ProductJpaRepository {
             p.title, 
             p.content
     """)
-    fun findByReservation(startDate:LocalDate, endDate: LocalDate, category: Category,pageable: Pageable):Slice<FindByReservationDto>
+    fun findByReservation(startDate: LocalDate, endDate: LocalDate, category: Category, pageable: Pageable): Slice<FindByReservationDto>
 
     @Query("""
                 SELECT 
@@ -108,7 +108,7 @@ interface ProductRepository : ProductJpaRepository {
             p.content
     """
     )
-    fun findBySearchableAndReservation(startDate:LocalDate, endDate: LocalDate, category: Category, search:String, pageable: Pageable):Slice<FindBySearchableAndReservationDto>
+    fun findBySearchableAndReservation(startDate: LocalDate, endDate: LocalDate, category: Category, search: String, pageable: Pageable): Slice<FindBySearchableAndReservationDto>
 
 
     @Query("""
@@ -135,5 +135,5 @@ interface ProductRepository : ProductJpaRepository {
         GROUP BY p.id, p.pricePerDay, p.title, p.content
         """
     )
-    fun findBySearchableAndReservationFilter(startDate:LocalDate, endDate: LocalDate, category: Category, search:String, pageable: Pageable): Slice<FindBySearchableAndReservationFilterDto>
+    fun findBySearchableAndReservationFilter(startDate: LocalDate, endDate: LocalDate, category: Category, search: String, pageable: Pageable): Slice<FindBySearchableAndReservationFilterDto>
 }

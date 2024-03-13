@@ -27,65 +27,65 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/products")
 class ProductController(
-    private val productService: ProductService
+        private val productService: ProductService
 ) {
 
     @PostMapping()
     fun createProduct(
-        @RequestBody createProductRequest: CreateProductRequest,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(createProductRequest, userPrincipal.id))
+            @RequestBody createProductRequest: CreateProductRequest,
+            @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ): ResponseEntity<ProductResponse> =
+            ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(createProductRequest, userPrincipal.id))
 
     @PutMapping("/{productId}")
     fun editProduct(
-        @RequestParam productId: Long,
-        @RequestBody editProductRequest: EditProductRequest,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, productId, userPrincipal.id))
+            @RequestParam productId: Long,
+            @RequestBody editProductRequest: EditProductRequest,
+            @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ): ResponseEntity<ProductResponse> =
+            ResponseEntity.status(HttpStatus.OK).body(productService.editProduct(editProductRequest, productId, userPrincipal.id))
 
 
     @DeleteMapping("/{productId}")
     fun deleteProduct(
-        @PathVariable productId: Long,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ):ResponseEntity<Unit> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId, userPrincipal.id))
+            @PathVariable productId: Long,
+            @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ): ResponseEntity<Unit> =
+            ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId, userPrincipal.id))
 
 
     @GetMapping()
     fun getProductList(
-        @RequestParam startDate: LocalDate,
-        @RequestParam endDate: LocalDate,
-        @RequestParam category: Category,
-        @RequestParam filterReservation: Boolean,
-        @RequestParam search:String?,
-        @RequestParam page:Int,
-    ):ResponseEntity<Slice<*>>{
+            @RequestParam startDate: LocalDate,
+            @RequestParam endDate: LocalDate,
+            @RequestParam category: Category,
+            @RequestParam filterReservation: Boolean,
+            @RequestParam search: String?,
+            @RequestParam page: Int,
+    ): ResponseEntity<Slice<*>> {
         val searchProductRequest = SearchProductRequest(
-            startDate,endDate,category,filterReservation, search,
+                startDate, endDate, category, filterReservation, search,
         )
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductList(searchProductRequest,PageRequest.of(page,10)))
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductList(searchProductRequest, PageRequest.of(page, 10)))
     }
 
     @GetMapping("/{productId}")
     fun getProductDetail(
-        @PathVariable productId: Long,
-    ):ResponseEntity<ProductResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.getProductDetail(productId))
+            @PathVariable productId: Long,
+    ): ResponseEntity<ProductResponse> =
+            ResponseEntity.status(HttpStatus.OK).body(productService.getProductDetail(productId))
 
 
     @GetMapping("members/{memberId}")
     fun getMembersProductList(
-        @PathVariable memberId: Long
-    ) :ResponseEntity<List<GetProductByMemberResponse>> =
+            @PathVariable memberId: Long
+    ): ResponseEntity<List<GetProductByMemberResponse>> =
             ResponseEntity.status(HttpStatus.OK).body(productService.getMemberProductList(memberId))
 
 
     @GetMapping("/categories")
-    fun getCategoryList():ResponseEntity<List<String>> =
-        ResponseEntity.status(HttpStatus.OK).body(productService.getCategoryList())
+    fun getCategoryList(): ResponseEntity<List<String>> =
+            ResponseEntity.status(HttpStatus.OK).body(productService.getCategoryList())
 
 
 }
