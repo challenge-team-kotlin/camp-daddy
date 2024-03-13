@@ -1,6 +1,7 @@
 package com.challengeteamkotlin.campdaddy.application.reservation
 
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.AlreadyReservedDateException
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.EndDateLessThanStartDateException
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.InvalidReservationPatchRequest
@@ -35,8 +36,7 @@ class ReservationService(
         val memberEntity: MemberEntity = memberRepository.findByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
         val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
-        // TODO Product Error Code 변경
-            ?: TODO()
+            ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
 
         if (createReservationRequest.endDate lessThan createReservationRequest.startDate) {

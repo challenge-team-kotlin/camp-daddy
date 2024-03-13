@@ -54,17 +54,16 @@ class ReservationServiceTest : DescribeSpec({
                 }
             }
         }
-        // TODO Product Entity Not Found
-//        context("주어진 productId로 Entity를 찾을 수 없을 경우") {
-//            val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
-//            every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-//            every { productRepository.findByIdOrNull(any()) } returns null
-//            it("EntityNotFoundException이 발생한다.") {
-//                shouldThrow<EntityNotFoundException> {
-//                    reservationService.createReservation(1L, createReservationRequest)
-//                }
-//            }
-//        }
+        context("주어진 productId로 Entity를 찾을 수 없을 경우") {
+            val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
+            every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
+            every { productRepository.findByIdOrNull(any()) } returns null
+            it("EntityNotFoundException이 발생한다.") {
+                shouldThrow<EntityNotFoundException> {
+                    reservationService.createReservation(1L, createReservationRequest)
+                }
+            }
+        }
         context("endDate가 startDate보다 작을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.tomorrow, DateFixture.today)
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
