@@ -16,8 +16,6 @@ import java.time.LocalDate
 
 interface ProductRepository : ProductJpaRepository {
 
-    fun findByMemberId(memberId: Long): List<ProductEntity>
-
     @Query("""
         SELECT
             new com.challengeteamkotlin.campdaddy.domain.repository.product.dto.FindByReservationFilterDto(
@@ -34,6 +32,11 @@ interface ProductRepository : ProductJpaRepository {
                 ON p.id = r.product.id
                 AND ((r.startDate >= :startDate AND r.startDate <= :endDate)
                     OR (r.endDate >= :startDate AND r.endDate <= :endDate))
+                    OR (r.startDate <:startDate and :endDate < r.endDate )
+                AND r.reservationStatus In (
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
+                )
         LEFT JOIN
             ProductImageEntity pi
                 ON p.id = pi.product.id
@@ -47,6 +50,8 @@ interface ProductRepository : ProductJpaRepository {
             p.content
     """)
     fun findByReservationFilter(startDate: LocalDate, endDate: LocalDate, category: Category, pageable: Pageable): Slice<FindByReservationFilterDto>
+
+    fun findByMemberId(memberId: Long): List<ProductEntity>
 
     @Query("""
         SELECT 
@@ -65,6 +70,12 @@ interface ProductRepository : ProductJpaRepository {
             ON p.id = r.product.id 
             AND (r.startDate BETWEEN :startDate AND :endDate 
                 OR r.endDate BETWEEN :startDate AND :endDate) 
+                OR (r.startDate <:startDate and :endDate < r.endDate )
+            AND r.reservationStatus IN 
+                (
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
+                )
         LEFT JOIN 
             ProductImageEntity pi
             ON p.id = pi.product.id
@@ -95,6 +106,12 @@ interface ProductRepository : ProductJpaRepository {
             ON p.id = r.product.id 
             AND (r.startDate BETWEEN :startDate AND :endDate 
                 OR r.endDate BETWEEN :startDate AND :endDate) 
+                OR (r.startDate <:startDate and :endDate < r.endDate )
+            AND r.reservationStatus IN 
+                (
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
+                    com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
+                )
         LEFT JOIN 
             ProductImageEntity pi
             ON p.id = pi.product.id
@@ -125,6 +142,12 @@ interface ProductRepository : ProductJpaRepository {
                 ON p.id = r.product.id
                     AND  (r.startDate between :startDate and :endDate
                         OR r.endDate between :startDate and :endDate)
+                        OR (r.startDate <:startDate and :endDate < r.endDate )
+                    AND r.reservationStatus IN 
+                        (
+                            com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
+                            com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
+                        )
             LEFT JOIN
                 ProductImageEntity p_i
                 ON p.id = p_i.product.id
