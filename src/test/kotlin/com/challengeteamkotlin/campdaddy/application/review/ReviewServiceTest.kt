@@ -54,18 +54,17 @@ class ReviewServiceTest : DescribeSpec({
                 }
             }
         }
-        // TODO product EntityNotFound
-//        When("주어진 productId로 Entity를 찾을 수 없을 경우") {
-//            val createReservationRequest =
-//                CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
-//            every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-//            every { productRepository.findByIdOrNull(any()) } returns null
-//            Then("EntityNotFoundException이 발생한다.") {
-//                shouldThrow<EntityNotFoundException> {
-//                    reviewService.createReview(1L, createReservationRequest)
-//                }
-//            }
-//        }
+        context("주어진 productId로 Entity를 찾을 수 없을 경우") {
+            val createReservationRequest =
+                CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
+            every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
+            every { productRepository.findByIdOrNull(any()) } returns null
+            it("EntityNotFoundException이 발생한다.") {
+                shouldThrow<EntityNotFoundException> {
+                    reviewService.createReview(1L, createReservationRequest)
+                }
+            }
+        }
         context("주어진 productId를 구매한 기록이 없을 경우") {
             val createReservationRequest =
                 CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))

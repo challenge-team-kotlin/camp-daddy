@@ -16,7 +16,6 @@ import com.challengeteamkotlin.campdaddy.domain.repository.reservation.Reservati
 import com.challengeteamkotlin.campdaddy.domain.repository.review.ReviewRepository
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.CreateReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.DeleteReviewRequest
-import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.GetProductsReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.PatchReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.response.ReviewResponse
 import org.springframework.data.repository.findByIdOrNull
@@ -95,8 +94,8 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun getProductReviews(getProductsReviewRequest: GetProductsReviewRequest): List<ReviewResponse> {
-        val product = productRepository.findByIdOrNull(getProductsReviewRequest.productId)
+    fun getProductReviews(productId: Long): List<ReviewResponse> {
+        val product = productRepository.findByIdOrNull(productId)
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return reviewRepository
