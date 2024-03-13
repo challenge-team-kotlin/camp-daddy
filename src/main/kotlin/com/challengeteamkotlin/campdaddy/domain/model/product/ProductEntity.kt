@@ -11,22 +11,22 @@ import org.hibernate.annotations.SQLDelete
 @SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id = ?")
 class ProductEntity(
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
-    val member: MemberEntity,
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "member_id", insertable = false, updatable = false)
+        val member: MemberEntity,
 
-    @Column(name = "price_per_day", nullable = false)
-    var pricePerDay: Long,
+        @Column(name = "price_per_day", nullable = false)
+        var pricePerDay: Long,
 
-    @Column(name = "title", nullable = false)
-    var title: String,
+        @Column(name = "title", nullable = false)
+        var title: String,
 
-    @Column(name = "content", nullable = false)
-    var content: String,
+        @Column(name = "content", nullable = false)
+        var content: String,
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "category", nullable = false)
-    var category: Category
+        @Enumerated(value = EnumType.STRING)
+        @Column(name = "category", nullable = false)
+        var category: Category
 
 ) : BaseEntity() {
 
@@ -35,7 +35,7 @@ class ProductEntity(
     @Column(name = "product_id")
     var id: Long? = null
 
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = false)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = true)
     protected val mutableReviews: MutableList<ReviewEntity> = mutableListOf()
     val reviews: List<ReviewEntity>
         get() = mutableReviews.toList()
@@ -44,7 +44,7 @@ class ProductEntity(
         mutableReviews.add(review)
     }
 
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = false)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
     protected val mutableImages: MutableList<ProductImageEntity> = mutableListOf()
     val images: List<ProductImageEntity>
         get() = mutableImages.toList()
@@ -53,7 +53,7 @@ class ProductEntity(
         mutableImages.add(productImage)
     }
 
-    fun deleteImage(productImage:ProductImageEntity){
+    fun deleteImage(productImage: ProductImageEntity) {
         mutableImages.remove(productImage)
     }
 
