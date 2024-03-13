@@ -1,6 +1,7 @@
 package com.challengeteamkotlin.campdaddy.application.review
 
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
 import com.challengeteamkotlin.campdaddy.application.review.execption.ChangeReviewRefusedException
 import com.challengeteamkotlin.campdaddy.application.review.execption.CreateReviewRefusedException
 import com.challengeteamkotlin.campdaddy.application.review.execption.ReviewErrorCode
@@ -15,7 +16,6 @@ import com.challengeteamkotlin.campdaddy.domain.repository.reservation.Reservati
 import com.challengeteamkotlin.campdaddy.domain.repository.review.ReviewRepository
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.CreateReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.DeleteReviewRequest
-import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.GetProductsReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.PatchReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.response.ReviewResponse
 import org.springframework.data.repository.findByIdOrNull
@@ -37,14 +37,13 @@ class ReviewService(
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
         val productEntity = productRepository.findByIdOrNull(createReviewRequest.productId)
-        // TODO Product Entity Not Found Exception
-            ?: TODO()
+            ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         if (!checkBoughtBefore(productEntity.id!!, memberEntity.id!!)) {
             throw CreateReviewRefusedException(ReviewErrorCode.DO_NOT_BOUGHT_BEFORE)
         }
 
-        if (!checkAlreadyCreateReview(productEntity.id!!, memberEntity.id!!)) {
+        if (checkAlreadyCreateReview(productEntity.id!!, memberEntity.id!!)) {
             throw CreateReviewRefusedException(ReviewErrorCode.ALREADY_CREATE_REVIEW)
         }
 
@@ -66,8 +65,8 @@ class ReviewService(
         val review: ReviewEntity = reviewRepository.findByIdOrNull(reviewId)
             ?: throw EntityNotFoundException(ReviewErrorCode.REVIEW_ENTITY_NOT_FOUND)
 
-        if (member.id != memberId) {
-            throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_AUTHORITY)
+        if (review.member.id != member.id) {
+            throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_PERMISSION)
         }
 
 
@@ -81,7 +80,6 @@ class ReviewService(
         patchReviewRequest.reviewImageUrls
             .filterNot { review.images.map { image -> image.imageUrl }.contains(it) }
             .forEach { review.uploadImage(ReviewImageEntity(review, it)) }
-
     }
 
     @Transactional(readOnly = true)
@@ -96,10 +94,9 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun getProductReviews(getProductsReviewRequest: GetProductsReviewRequest): List<ReviewResponse> {
-        val product = productRepository.findByIdOrNull(getProductsReviewRequest.productId)
-        // TODO Product Entity Not Found Exception
-            ?: TODO()
+    fun getProductReviews(productId: Long): List<ReviewResponse> {
+        val product = productRepository.findByIdOrNull(productId)
+            ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return reviewRepository
             .findByProductId(product.id!!)
@@ -109,10 +106,12 @@ class ReviewService(
 
     @Transactional
     fun deleteReview(deleteReviewRequest: DeleteReviewRequest) {
+        val member = memberRepository.findByIdOrNull(deleteReviewRequest.memberId)
+            ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
         val review = reviewRepository.findByIdOrNull(deleteReviewRequest.reviewId)
             ?: throw EntityNotFoundException(ReviewErrorCode.REVIEW_ENTITY_NOT_FOUND)
-        if (review.member.id != deleteReviewRequest.memberId) {
-            throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_AUTHORITY)
+        if (review.member.id != member.id) {
+            throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_PERMISSION)
         }
 
         reviewRepository.delete(review)
