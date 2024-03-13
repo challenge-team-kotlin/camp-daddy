@@ -103,8 +103,8 @@ dependencies {
     implementation("org.webjars:sockjs-client:1.1.2")
     implementation("org.webjars:stomp-websocket:2.3.3-1")
 
-}
 
+}
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
