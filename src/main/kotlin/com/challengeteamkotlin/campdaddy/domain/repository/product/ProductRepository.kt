@@ -33,7 +33,7 @@ interface ProductRepository : ProductJpaRepository {
                 AND ((r.startDate >= :startDate AND r.startDate <= :endDate)
                     OR (r.endDate >= :startDate AND r.endDate <= :endDate))
                     OR (r.startDate <:startDate and :endDate < r.endDate )
-                AND r.reservationStatus In (
+                AND r.reservationStatus NOT IN (
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
                 )
@@ -71,8 +71,7 @@ interface ProductRepository : ProductJpaRepository {
             AND (r.startDate BETWEEN :startDate AND :endDate 
                 OR r.endDate BETWEEN :startDate AND :endDate) 
                 OR (r.startDate <:startDate and :endDate < r.endDate )
-            AND r.reservationStatus IN 
-                (
+            AND r.reservationStatus NOT IN (
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
                 )
@@ -107,8 +106,7 @@ interface ProductRepository : ProductJpaRepository {
             AND (r.startDate BETWEEN :startDate AND :endDate 
                 OR r.endDate BETWEEN :startDate AND :endDate) 
                 OR (r.startDate <:startDate and :endDate < r.endDate )
-            AND r.reservationStatus IN 
-                (
+            AND r.reservationStatus NOT IN (
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
                     com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
                 )
@@ -143,8 +141,7 @@ interface ProductRepository : ProductJpaRepository {
                     AND  (r.startDate between :startDate and :endDate
                         OR r.endDate between :startDate and :endDate)
                         OR (r.startDate <:startDate and :endDate < r.endDate )
-                    AND r.reservationStatus IN 
-                        (
+                    AND r.reservationStatus NOT IN (
                             com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.REQ,
                             com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus.CANCELED
                         )
