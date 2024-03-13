@@ -4,7 +4,6 @@ import com.challengeteamkotlin.campdaddy.application.review.ReviewService
 import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.CreateReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.DeleteReviewRequest
-import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.GetProductsReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.PatchReviewRequest
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.response.ReviewResponse
 import jakarta.validation.Valid
@@ -49,18 +48,14 @@ class ReviewController(
 
     @GetMapping("/products/{productId}")
     fun getProductReviews(
-        @PathVariable productId: Long,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
+        @PathVariable productId: Long
     ): ResponseEntity<List<ReviewResponse>> {
-        return reviewService.getProductReviews(
-            GetProductsReviewRequest(
-                productId = productId, memberId = userPrincipal.id
-            )
-        ).let {
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .body(it)
-        }
+        return reviewService.getProductReviews(productId)
+            .let {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(it)
+            }
     }
 
     @GetMapping("/me")
