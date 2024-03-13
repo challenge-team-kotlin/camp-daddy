@@ -1,6 +1,7 @@
 package com.challengeteamkotlin.campdaddy.application.review
 
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
 import com.challengeteamkotlin.campdaddy.application.review.execption.ChangeReviewRefusedException
 import com.challengeteamkotlin.campdaddy.application.review.execption.CreateReviewRefusedException
 import com.challengeteamkotlin.campdaddy.application.review.execption.ReviewErrorCode
@@ -37,8 +38,7 @@ class ReviewService(
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
         val productEntity = productRepository.findByIdOrNull(createReviewRequest.productId)
-        // TODO Product Entity Not Found Exception
-            ?: TODO()
+            ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         if (!checkBoughtBefore(productEntity.id!!, memberEntity.id!!)) {
             throw CreateReviewRefusedException(ReviewErrorCode.DO_NOT_BOUGHT_BEFORE)
@@ -95,10 +95,9 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun getProductReviews(productId: Long): List<ReviewResponse> {
-        val product = productRepository.findByIdOrNull(productId)
-        // TODO Product Entity Not Found Exception
-            ?: TODO()
+    fun getProductReviews(getProductsReviewRequest: GetProductsReviewRequest): List<ReviewResponse> {
+        val product = productRepository.findByIdOrNull(getProductsReviewRequest.productId)
+            ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return reviewRepository
             .findByProductId(product.id!!)
