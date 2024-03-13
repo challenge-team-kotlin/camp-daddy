@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.time.Duration
@@ -24,13 +23,13 @@ class JwtPlugin(
         }
     }
 
-    fun generateAccessToken(subject: String, nickname: String): String {
-        return generateToken(subject, nickname, Duration.ofHours(jwtProperties.accessTokenExpirationHour))
+    fun generateAccessToken(subject: String, email: String, role: String): String {
+        return generateToken(subject, email, role, Duration.ofHours(jwtProperties.accessTokenExpirationHour))
     }
 
-    private fun generateToken(subject: String, nickname: String, expirationPeriod: Duration): String {
+    private fun generateToken(subject: String, email: String, role: String, expirationPeriod: Duration): String {
         val claims: Claims = Jwts.claims()
-            .add(mapOf("nickname" to nickname))
+            .add(mapOf("email" to email, "role" to role))
             .build()
 
         val key = Keys.hmacShaKeyFor(jwtProperties.secret.toByteArray(StandardCharsets.UTF_8))

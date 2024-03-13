@@ -6,7 +6,7 @@ import com.challengeteamkotlin.campdaddy.domain.model.product.ProductEntity
 import java.time.LocalDateTime
 
 data class ChatRoomResponse(
-    val nickname: String,
+    val nickname: String?,
     val productImageUrl: String?,
     val lastChatMessage: String?,
     val lastChatDate: LocalDateTime?,

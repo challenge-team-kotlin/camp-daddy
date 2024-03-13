@@ -16,7 +16,7 @@ class RestApiExceptionAdvice {
 
     @ExceptionHandler
     fun handleCustomExceptionHandle(exception: CustomException): ResponseEntity<ErrorResponse> {
-        logger.warn("${exception.errorCode.errorMessage}: {}", exception.message)
+        logger.warn("{}", exception.errorCode.errorMessage)
         return ErrorResponse.of(exception.errorCode)
     }
 

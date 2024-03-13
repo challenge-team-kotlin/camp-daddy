@@ -6,7 +6,7 @@ data class MemberResponse(
     val id: Long,
     val email: String,
     val name: String,
-    val nickname: String
+    val nickname: String?
 ) {
     companion object {
         fun from(member: MemberEntity): MemberResponse {

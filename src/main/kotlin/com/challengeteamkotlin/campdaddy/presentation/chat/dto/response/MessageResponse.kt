@@ -4,7 +4,7 @@ import com.challengeteamkotlin.campdaddy.domain.model.chat.ChatMessageEntity
 import java.time.LocalDateTime
 
 data class MessageResponse(
-    val nickname: String,
+    val nickname: String?,
     val message: String,
     val createdAt: LocalDateTime
 ) {
