@@ -18,7 +18,7 @@ class ClientMessageInterceptor(
         val accessor = StompHeaderAccessor.wrap(message)
 
         if (accessor.command == StompCommand.CONNECT) {
-            val accessToken = accessor.getFirstNativeHeader("Bearer") as String
+            val accessToken = accessor.getFirstNativeHeader("Authorization") as String
             jwtPlugin.validateToken(accessToken)
                 .onFailure { throw AccessDeniedException(AuthErrorCode.ACCESS_DENIED) }
         }
