@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class GetProductByMemberResponse(
         val productId: Long,
-        val presentationImage: String,
+        val presentationImage: List<String>,
         val createdAt: LocalDateTime,
         val title: String,
 ) {
@@ -15,7 +15,7 @@ data class GetProductByMemberResponse(
                     productId = productEntity.id!!,
                     title = productEntity.title,
                     createdAt = productEntity.createdAt,
-                    presentationImage = productEntity.images[0].imageUrl,
+                    presentationImage = productEntity.images.map { it.imageUrl },
             )
         }
     }

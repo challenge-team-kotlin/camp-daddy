@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLDelete
 class ProductEntity(
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "member_id", insertable = false, updatable = false)
+        @JoinColumn(name = "member_id", insertable = true, updatable = false)
         val member: MemberEntity,
 
         @Column(name = "price_per_day", nullable = false)

@@ -34,7 +34,7 @@ class ProductService(
 
         return request.from(userInfo).apply {
             request.images.map {
-                ProductImageEntity(this, it)
+                this.uploadImage(ProductImageEntity(this, it))
             }
         }.run {
             productRepository.save(this)
