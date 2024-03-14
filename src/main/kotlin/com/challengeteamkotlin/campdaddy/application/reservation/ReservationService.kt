@@ -54,7 +54,7 @@ class ReservationService(
 
         createReservationRequest
             .of(productEntity, memberEntity, totalPrice)
-            .apply { reservationRepository.save(this) }
+            .apply { reservationRepository.createReservation(this) }
     }
 
     @Transactional
@@ -63,7 +63,7 @@ class ReservationService(
         memberId: Long,
         reservationStatus: ReservationStatus
     ) {
-        val reservation = reservationRepository.findByIdOrNull(reservationId)
+        val reservation = reservationRepository.getReservationByIdOrNull(reservationId)
             ?: throw EntityNotFoundException(ReservationErrorCode.RESERVATION_ENTITY_NOT_FOUND)
 
         if (!patchReservationHandler.checkReservationPolicy(reservation, memberId, reservationStatus)) {
@@ -75,19 +75,19 @@ class ReservationService(
 
     @Transactional(readOnly = true)
     fun getProductReservations(productId: Long, pageNo: Int, pageSize: Int): Page<ReservationResponse> =
-        reservationRepository.findByProductId(productId, PageRequest.of(pageNo, pageSize))
+        reservationRepository.getReservationsProductId(productId, PageRequest.of(pageNo, pageSize))
             .map { ReservationResponse.from(it) }
 
 
     @Transactional(readOnly = true)
     fun getMemberReservations(memberId: Long, pageNo: Int, pageSize: Int): Page<ReservationResponse> =
-        reservationRepository.findByMemberId(memberId, PageRequest.of(pageNo, pageSize))
+        reservationRepository.getReservationByMemberId(memberId, PageRequest.of(pageNo, pageSize))
             .map { ReservationResponse.from(it) }
 
 
     @Transactional(readOnly = true)
     fun getReservation(reservationId: Long): ReservationResponse =
-        reservationRepository.findByIdOrNull(reservationId)
+        reservationRepository.getReservationByIdOrNull(reservationId)
             ?.let {
                 ReservationResponse.from(it)
             } ?: throw EntityNotFoundException(ReservationErrorCode.RESERVATION_ENTITY_NOT_FOUND)
@@ -99,7 +99,7 @@ class ReservationService(
     }
 
     private fun checkAlreadyReserved(productId: Long, startDate: LocalDate, endDate: LocalDate): Boolean {
-        return reservationRepository.findFirstByProductIdAndStartDateAndEndDate(
+        return reservationRepository.getFirstReservation(
             productId,
             startDate,
             endDate
