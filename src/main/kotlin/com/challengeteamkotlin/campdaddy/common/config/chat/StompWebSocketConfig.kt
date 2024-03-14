@@ -20,6 +20,7 @@ class StompWebSocketConfig(
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
+        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*")
         registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*").withSockJS()
     }
 
