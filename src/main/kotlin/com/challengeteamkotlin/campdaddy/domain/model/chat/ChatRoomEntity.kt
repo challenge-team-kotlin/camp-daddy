@@ -9,15 +9,15 @@ import jakarta.persistence.*
 class ChatRoomEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_id", insertable = false, updatable = false)
+    @JoinColumn(name = "buyer_id", updatable = false)
     val buyer: MemberEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", insertable = false, updatable = false)
+    @JoinColumn(name = "seller_id", updatable = false)
     val seller: MemberEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @JoinColumn(name = "product_id", updatable = false)
     val product: ProductEntity,
 
     ) {
