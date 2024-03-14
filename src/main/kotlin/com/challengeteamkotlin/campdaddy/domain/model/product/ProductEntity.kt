@@ -11,22 +11,22 @@ import org.hibernate.annotations.SQLDelete
 @SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id = ?")
 class ProductEntity(
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "member_id", insertable = false, updatable = false)
-        val member: MemberEntity,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    val member: MemberEntity,
 
-        @Column(name = "price_per_day", nullable = false)
-        var pricePerDay: Long,
+    @Column(name = "price_per_day", nullable = false)
+    var pricePerDay: Long,
 
-        @Column(name = "title", nullable = false)
-        var title: String,
+    @Column(name = "title", nullable = false)
+    var title: String,
 
-        @Column(name = "content", nullable = false)
-        var content: String,
+    @Column(name = "content", nullable = false)
+    var content: String,
 
-        @Enumerated(value = EnumType.STRING)
-        @Column(name = "category", nullable = false)
-        var category: Category
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    var category: Category
 
 ) : BaseEntity() {
 
@@ -57,7 +57,12 @@ class ProductEntity(
         mutableImages.remove(productImage)
     }
 
-
-    //dto => entity
+    fun getFirstImage(): String? {
+        return if (images.isEmpty()) {
+            null
+        } else {
+            images[0].imageUrl
+        }
+    }
 
 }
