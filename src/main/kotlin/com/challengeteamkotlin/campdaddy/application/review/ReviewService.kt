@@ -36,7 +36,7 @@ class ReviewService(
         val memberEntity: MemberEntity = memberRepository.getMemberByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
-        val productEntity = productRepository.findByIdOrNull(createReviewRequest.productId)
+        val productEntity = productRepository.getProductById(createReviewRequest.productId)
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         if (!checkBoughtBefore(productEntity.id!!, memberEntity.id!!)) {
@@ -95,7 +95,7 @@ class ReviewService(
 
     @Transactional(readOnly = true)
     fun getProductReviews(productId: Long): List<ReviewResponse> {
-        val product = productRepository.findByIdOrNull(productId)
+        val product = productRepository.getProductById(productId)
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return reviewRepository
