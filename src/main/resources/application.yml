@@ -20,7 +20,8 @@ spring:
             client_id: ${KAKAO_CLIENT_ID}
             client_secret: ${KAKAO_CLIENT_SECRET}
             client_authentication_method: client_secret_post
-            redirect-uri: ${KAKAO_REDIRECT_URL}
+            redirect-uri: http://ec2-43-203-62-127.ap-northeast-2.compute.amazonaws.com:8080/oauth2/callback/kakao
+              #http://localhost:8080/oauth2/callback/kakao
             authorization_grant_type: authorization_code
             scope:
               - profile_nickname
@@ -29,8 +30,7 @@ spring:
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: http://localhost:8080/oauth2/callback/naver
-#            http://ec2-43-203-62-127.ap-northeast-2.compute.amazonaws.com:8080/oauth2/callback/naver
+            redirect-uri: http://ec2-43-203-62-127.ap-northeast-2.compute.amazonaws.com:8080/oauth2/callback/naver
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: naver
@@ -39,6 +39,9 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: http://ec2-43-203-62-127.ap-northeast-2.compute.amazonaws.com:8080/oauth2/callback/google
+              #http://localhost:8080/oauth2/callback/google
+
+            # http -> https 로 바꿔야함
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: google
@@ -62,7 +65,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
-    
+
   h2:
     console:
       enabled: true
