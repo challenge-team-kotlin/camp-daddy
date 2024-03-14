@@ -6,7 +6,7 @@ data class SearchProductResponse(
         val productId: Long,
         val title: String,
         val content: String,
-        val memberNickName: String,
+        val memberNickName: String?,
         val pricePerDay: Long,
         val imageUrl: String,
 ) {

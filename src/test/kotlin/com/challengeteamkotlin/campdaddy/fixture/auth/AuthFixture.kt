@@ -1,16 +1,32 @@
 package com.challengeteamkotlin.campdaddy.fixture.auth
 
 import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
-import com.challengeteamkotlin.campdaddy.presentation.auth.dto.response.KakaoUserAccountResponse
-import com.challengeteamkotlin.campdaddy.presentation.auth.dto.response.KakaoUserInfoResponse
-import com.challengeteamkotlin.campdaddy.presentation.auth.dto.response.KakaoUserPropertiesResponse
+import com.challengeteamkotlin.campdaddy.domain.model.member.OAuth2Provider
+import com.challengeteamkotlin.campdaddy.presentation.auth.dto.response.OAuth2UserInfo
 
 object AuthFixture {
+    //test provider
+    val wrongProvider = "wrongProvider"
+    //test
+    val newAuthInfo = OAuth2UserInfo(
+        id = "1234",
+        provider = OAuth2Provider.KAKAO.name,
+        email = "test@test.com",
+        name = "test"
+    )
+
+    val existAuthInfo = OAuth2UserInfo(
+        id = "1234",
+        provider = OAuth2Provider.KAKAO.name,
+        email = "test@test.com",
+        name = "test"
+    )
     // KAKAO Request
-    val kakaoRegisterInfo = KakaoUserInfoResponse(
-        id = 1L,
-        properties = KakaoUserPropertiesResponse("이승상"),
-        kakaoAccount = KakaoUserAccountResponse("seungsang@kakao.com", "이승상", "010-1234-5678")
+    val oAuth2KakaoUserInfo = OAuth2UserInfo(
+        id = "1234",
+        provider = OAuth2Provider.KAKAO.name,
+        email = "exist@mail.com",
+        name = "exist"
     )
 
     // UserPrincipal

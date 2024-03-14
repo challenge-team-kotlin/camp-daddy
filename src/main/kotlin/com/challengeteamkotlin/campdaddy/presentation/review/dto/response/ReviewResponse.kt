@@ -5,7 +5,7 @@ import com.challengeteamkotlin.campdaddy.domain.model.review.ReviewEntity
 data class ReviewResponse(
     val reviewId: Long,
     val productId: Long,
-    val nickName: String,
+    val nickName: String?,
     val content: String,
     val imageUrls: List<String>
 ) {

@@ -12,40 +12,54 @@ class MemberEntity(
     @Column(name = "email", nullable = false, unique = true)
     val email: String,
 
-    @Column(name = "nickname", nullable = false, unique = true)
-    var nickname: String,
-
     @Column(name = "name", nullable = false)
     var name: String,
 
-    @Column(name = "phone_number", nullable = false, unique = true)
-    var phoneNumber: String,
-
     @Enumerated(EnumType.STRING)
-    val provider: MemberProvider,
+    val provider: OAuth2Provider,
 
     @Column(name = "provider_id")
     val providerId: String,
 
-) : BaseEntity() {
+
+    ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     var id: Long? = null
 
+    @Column(name = "nickname", nullable = true, unique = true)
+    var nickname: String? = null
+
     fun toUpdate(request: UpdateProfileRequest) {
-        nickname = request.nickname
+        nickname = request.nickname ?: null
     }
 
     companion object {
-        fun ofKakao(id: Long, nickname: String, email: String, phoneNumber: String, name: String): MemberEntity {
+        fun ofKakao(id: String, email: String, name: String): MemberEntity {
             return MemberEntity(
-                provider = MemberProvider.KAKAO,
-                providerId = id.toString(),
-                nickname = nickname,
+                provider = OAuth2Provider.KAKAO,
+                providerId = id,
                 email = email,
-                name = name,
-                phoneNumber = phoneNumber
+                name = name
+            )
+        }
+
+        fun ofNaver(id: String, email: String, name: String): MemberEntity {
+            return MemberEntity(
+                provider = OAuth2Provider.NAVER,
+                providerId = id,
+                email = email,
+                name = name
+            )
+        }
+
+        fun ofGoogle(id: String, email: String, name: String): MemberEntity {
+            return MemberEntity(
+                provider = OAuth2Provider.GOOGLE,
+                providerId = id,
+                email = email,
+                name = name
             )
         }
     }
