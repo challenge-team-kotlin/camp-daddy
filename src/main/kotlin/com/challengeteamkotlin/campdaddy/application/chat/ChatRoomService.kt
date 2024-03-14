@@ -1,6 +1,8 @@
 package com.challengeteamkotlin.campdaddy.application.chat
 
 import com.challengeteamkotlin.campdaddy.application.chat.exception.ChatErrorCode
+import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
+import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
 import com.challengeteamkotlin.campdaddy.domain.model.chat.ChatRoomEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatMessageRepository
@@ -25,36 +27,31 @@ class ChatRoomService(
 
     @Transactional
     fun createChat(request: CreateChatRoomRequest): Long {
-        return when (val chatRoom = chatRoomRepository.findByBuyerIdAndProductId(request.buyerId, request.productId)) {
-            null -> {
-                val buyer = memberRepository.findByIdOrNull(request.buyerId) ?: TODO("throw EntityNotFoundException()")
-                val product =
-                    productRepository.findByIdOrNull(request.productId) ?: TODO("throw EntityNotFoundException()")
-                val chatRoom = request.of(buyer, product.member, product)
+        val buyer = memberRepository.findByIdOrNull(request.buyerId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
+        val product = productRepository.findByIdOrNull(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
-                chatRoomRepository.save(chatRoom).id!!
-            }
-
+        return when (val chatRoom = chatRoomRepository.getChatRoomByBuyerIdAndProductId(request.buyerId, request.productId)) {
+            null -> chatRoomRepository.createChat(request.of(buyer, product.member, product)).id!!
             else -> chatRoom.id!!
         }
     }
 
     fun getPersonalChatList(memberId: Long): List<ChatRoomResponse>? {
-        val member = memberRepository.findByIdOrNull(memberId) ?: TODO("throw EntityNotFoundException()")
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
-        return chatRoomRepository.findByBuyerIdOrSellerId(member.id!!, member.id!!)?.map {
-            val latestChat = chatMessageRepository.findFirstByChatRoomIdOrderByCreatedAt(it.id!!)
+        return chatRoomRepository.getChatRoomByBuyerIdOrSellerId(member.id!!, member.id!!)?.map {
+            val latestChat = chatMessageRepository.getLatestChatMessage(it.id!!)
 
             when (it.buyer) {
                 member -> ChatRoomResponse.of(it.seller, it.product, latestChat)
                 else -> ChatRoomResponse.of(it.buyer, it.product, latestChat)
             }
-        }
+        } ?: emptyList()
     }
 
-    fun getChat(roomId: Long): ChatRoomDetailResponse {
-        val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
-        val chatMessages = chatMessageRepository.findByChatRoomId(chatRoom.id!!)?.map {
+    fun getChatDetail(roomId: Long): ChatRoomDetailResponse {
+        val chatRoom = getChatRoom(roomId)
+        val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!)?.map {
             MessageResponse.from(it)
         } ?: emptyList()
 
@@ -65,10 +62,10 @@ class ChatRoomService(
     fun removeChat(roomId: Long) {
         val chatRoom = getChatRoom(roomId)
 
-        chatRoomRepository.delete(chatRoom)
+        chatRoomRepository.removeChat(chatRoom)
     }
 
     private fun getChatRoom(roomId: Long): ChatRoomEntity {
-        return chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
+        return chatRoomRepository.getChatRoomById(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
     }
 }

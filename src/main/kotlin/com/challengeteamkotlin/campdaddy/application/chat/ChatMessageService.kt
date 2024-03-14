@@ -22,15 +22,14 @@ class ChatMessageService(
     @Transactional
     fun save(roomId: Long, request: MessageRequest): Long {
         val sender = memberRepository.findByIdOrNull(request.userId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
+        val chatRoom = chatRoomRepository.getChatRoomById(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
 
-        if (chatRoom.buyer != sender && chatRoom.seller != sender) {
+        if (chatRoom.buyer.id != sender.id && chatRoom.seller.id != sender.id) {
             throw ChatFailureException(ChatErrorCode.ACCESS_DENIED)
         }
 
-        val message = request.of(sender, chatRoom)
 
-        chatMessageRepository.save(message)
+        val message = chatMessageRepository.createChatMessage(request.of(sender, chatRoom))
 
         return message.id!!
     }
