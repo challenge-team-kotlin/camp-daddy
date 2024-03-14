@@ -9,7 +9,6 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.response.MemberResponse
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -27,18 +26,18 @@ class MemberService(
         validateSameMember(memberId, userPrincipal.id)
         val profile = getProfile(memberId)
         profile.toUpdate(request)
-        memberRepository.save(profile)
+        memberRepository.updateMember(profile)
     }
 
     @Transactional
     fun deleteMember(memberId: Long, userPrincipal: UserPrincipal) {
         validateSameMember(memberId, userPrincipal.id)
         val member = getProfile(memberId)
-        memberRepository.delete(member)
+        memberRepository.deleteMember(member)
     }
 
     private fun getProfile(memberId: Long): MemberEntity {
-        return memberRepository.findByIdOrNull(memberId)
+        return memberRepository.getMemberByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
     }
 

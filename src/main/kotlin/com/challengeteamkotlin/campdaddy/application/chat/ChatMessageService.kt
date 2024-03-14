@@ -9,7 +9,6 @@ import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatRoomReposito
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.MessageRequest
 import jakarta.transaction.Transactional
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,7 +20,7 @@ class ChatMessageService(
 
     @Transactional
     fun save(roomId: Long, request: MessageRequest): Long {
-        val sender = memberRepository.findByIdOrNull(request.userId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
+        val sender = memberRepository.getMemberByIdOrNull(request.userId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
         val chatRoom = chatRoomRepository.getChatRoomById(roomId) ?: throw EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
 
         if (chatRoom.buyer.id != sender.id && chatRoom.seller.id != sender.id) {

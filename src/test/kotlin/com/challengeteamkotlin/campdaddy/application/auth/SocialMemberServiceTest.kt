@@ -37,7 +37,7 @@ class SocialMemberServiceTest(
     describe("소셜 멤버 회원가입 테스트") {
 
         context("소셜 멤버의 Email이 이미 존재하면") {
-            every { memberRepository.existsByEmail(existEmailMember.email) } returns true
+            every { memberRepository.existMemberByEmail(existEmailMember.email) } returns true
             it("예외가 던져진다.") {
              shouldThrow<DuplicateEmailException> {
                  socialMemberService.registerIfAbsent(newAuthInfo)
@@ -46,14 +46,14 @@ class SocialMemberServiceTest(
         }
 
         context("소셜 멤버의 정보가 서버에 존재하지 않는다면") {
-            every { memberRepository.existsByEmail(any()) } returns false
-            every { memberRepository.existsByProviderAndProviderId(any(), any()) } returns false
-            every { memberRepository.save(any()) } returns kakaoNewMember
+            every { memberRepository.existMemberByEmail(any()) } returns false
+            every { memberRepository.existMemberByProviderAndProviderId(any(), any()) } returns false
+            every { memberRepository.createMember(any()) } returns kakaoNewMember
             val saveMember = socialMemberService.registerIfAbsent(oAuth2KakaoUserInfo)
 
             it("회원 가입이 진행된다") {
-                verify(exactly = 1) { memberRepository.save(any()) }
-                verify(exactly = 0) { memberRepository.findByProviderAndProviderId(any(), any()) }
+                verify(exactly = 1) { memberRepository.createMember(any()) }
+                verify(exactly = 0) { memberRepository.findMemberByProviderAndProviderId(any(), any()) }
                 saveMember.id shouldBe kakaoNewMember.id
                 saveMember.email shouldBe kakaoNewMember.email
                 saveMember.name shouldBe kakaoNewMember.name
@@ -61,12 +61,12 @@ class SocialMemberServiceTest(
             }
         }
         context("소셜 멤버의 정보가 서버에 존재하면") {
-            every { memberRepository.existsByProviderAndProviderId(any(), any()) } returns true
-            every { memberRepository.findByProviderAndProviderId(any(), any()) } returns existMember
-            val existSocialMember = memberRepository.findByProviderAndProviderId(OAuth2Provider.valueOf(existAuthInfo.provider), existAuthInfo.id)
+            every { memberRepository.existMemberByProviderAndProviderId(any(), any()) } returns true
+            every { memberRepository.findMemberByProviderAndProviderId(any(), any()) } returns existMember
+            val existSocialMember = memberRepository.findMemberByProviderAndProviderId(OAuth2Provider.valueOf(existAuthInfo.provider), existAuthInfo.id)
             it("소셜 멤버의 정보를 반환한다") {
-                verify(exactly = 0) { memberRepository.save(any()) }
-                verify(exactly = 1) { memberRepository.findByProviderAndProviderId(any(), any()) }
+                verify(exactly = 0) { memberRepository.createMember(any()) }
+                verify(exactly = 1) { memberRepository.findMemberByProviderAndProviderId(any(), any()) }
                 existSocialMember.id shouldBe existMember.id
                 existSocialMember.email shouldBe existMember.email
                 existSocialMember.name shouldBe existMember.name
