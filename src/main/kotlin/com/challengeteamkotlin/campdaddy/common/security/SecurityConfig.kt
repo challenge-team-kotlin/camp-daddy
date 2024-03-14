@@ -41,11 +41,11 @@ class SecurityConfig(
                 }.successHandler(oAuth2LoginSuccessHandler)}
             .authorizeHttpRequests {
                 it.requestMatchers(
-                    "/login/**",
+                    "/login",
                     "/signup",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "/h2-console/**"
+                    "/h2-console"
                 ).permitAll()
                     .anyRequest().authenticated()
             }
