@@ -54,7 +54,7 @@ class ReviewService(
                     .map { ReviewImageEntity(this, it) }
                     .forEach { this.uploadImage(it) }
             }.run {
-                reviewRepository.save(this)
+                reviewRepository.createReview(this)
             }
     }
 
@@ -62,7 +62,7 @@ class ReviewService(
     fun patchReview(memberId: Long, reviewId: Long, patchReviewRequest: PatchReviewRequest) {
         val member: MemberEntity = memberRepository.findByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val review: ReviewEntity = reviewRepository.findByIdOrNull(reviewId)
+        val review: ReviewEntity = reviewRepository.getReviewByIdOrNull(reviewId)
             ?: throw EntityNotFoundException(ReviewErrorCode.REVIEW_ENTITY_NOT_FOUND)
 
         if (review.member.id != member.id) {
@@ -88,7 +88,7 @@ class ReviewService(
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
         return reviewRepository
-            .findByMemberId(member.id!!)
+            .getReviewsByMemberId(member.id!!)
             ?.map { ReviewResponse.from(it) }
             ?: emptyList()
     }
@@ -99,7 +99,7 @@ class ReviewService(
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return reviewRepository
-            .findByProductId(product.id!!)
+            .getReviewsByProductId(product.id!!)
             ?.map { ReviewResponse.from(it) }
             ?: emptyList()
     }
@@ -108,13 +108,13 @@ class ReviewService(
     fun deleteReview(deleteReviewRequest: DeleteReviewRequest) {
         val member = memberRepository.findByIdOrNull(deleteReviewRequest.memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val review = reviewRepository.findByIdOrNull(deleteReviewRequest.reviewId)
+        val review = reviewRepository.getReviewByIdOrNull(deleteReviewRequest.reviewId)
             ?: throw EntityNotFoundException(ReviewErrorCode.REVIEW_ENTITY_NOT_FOUND)
         if (review.member.id != member.id) {
             throw ChangeReviewRefusedException(ReviewErrorCode.DO_NOT_HAVE_PERMISSION)
         }
 
-        reviewRepository.delete(review)
+        reviewRepository.deleteReview(review)
     }
 
     private fun checkBoughtBefore(productId: Long, memberId: Long): Boolean {
@@ -125,8 +125,7 @@ class ReviewService(
     }
 
     private fun checkAlreadyCreateReview(productId: Long, memberId: Long): Boolean {
-        return reviewRepository.existsByProductIdAndMemberId(productId, memberId)
+        return reviewRepository.isExistsByProductIdAndMemberId(productId, memberId)
     }
-
 
 }

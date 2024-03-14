@@ -17,7 +17,6 @@ import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.PatchRe
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.response.ReviewResponse
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -75,7 +74,7 @@ class ReviewServiceTest : DescribeSpec({
                     any(), any(), any()
                 )
             } returns false
-            every { reviewRepository.existsByProductIdAndMemberId(any(), any()) } returns false
+            every { reviewRepository.isExistsByProductIdAndMemberId(any(), any()) } returns false
             it("CreateReviewRefusedException 발생한다.") {
                 shouldThrow<CreateReviewRefusedException> {
                     reviewService.createReview(1L, createReservationRequest)
@@ -93,7 +92,7 @@ class ReviewServiceTest : DescribeSpec({
                     any(), any(), any()
                 )
             } returns true
-            every { reviewRepository.existsByProductIdAndMemberId(any(), any()) } returns true
+            every { reviewRepository.isExistsByProductIdAndMemberId(any(), any()) } returns true
             it("CreateReviewRefusedException 발생한다.") {
                 shouldThrow<CreateReviewRefusedException> {
                     reviewService.createReview(1L, createReservationRequest)
@@ -111,8 +110,8 @@ class ReviewServiceTest : DescribeSpec({
                     any(), any(), any()
                 )
             } returns true
-            every { reviewRepository.existsByProductIdAndMemberId(any(), any()) } returns false
-            every { reviewRepository.save(any()) } returns ReviewFixture.review
+            every { reviewRepository.isExistsByProductIdAndMemberId(any(), any()) } returns false
+            every { reviewRepository.createReview(any()) } returns ReviewFixture.review
             it("Exception이 발생하지 않는다.") {
                 shouldNotThrow<CustomException> {
                     reviewService.createReview(1L, createReservationRequest)
@@ -136,7 +135,7 @@ class ReviewServiceTest : DescribeSpec({
                 val patchReviewRequest =
                     PatchReviewRequest("change review", 5, listOf("https://image1.com", "https://image2.com"))
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns null
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns null
                 it("EntityNotFoundException이 발생한다.") {
                     shouldThrow<EntityNotFoundException> {
                         reviewService.patchReview(1L, 1L, patchReviewRequest)
@@ -147,7 +146,7 @@ class ReviewServiceTest : DescribeSpec({
                 val patchReviewRequest =
                     PatchReviewRequest("change review", 5, listOf("https://image1.com", "https://image2.com"))
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.seller.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns ReviewFixture.review.apply {
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns ReviewFixture.review.apply {
                     this.member.id = 2L
                     this.product.id = 1L
                 }
@@ -162,7 +161,7 @@ class ReviewServiceTest : DescribeSpec({
                 val patchReviewRequest =
                     PatchReviewRequest("change review", 5, listOf("https://image1.com", "https://image2.com"))
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns ReviewFixture.review.apply {
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns ReviewFixture.review.apply {
                     this.member.id = 1L
                     this.product.id = 1L
                 }
@@ -178,7 +177,7 @@ class ReviewServiceTest : DescribeSpec({
             context("주어진 memberId로 Entity를 찾을 수 없을 경우") {
                 val deleteReviewRequest = DeleteReviewRequest(1L, 1L)
                 every { memberRepository.findByIdOrNull(any()) } returns null
-                every { reviewRepository.findByIdOrNull(any()) } returns ReviewFixture.review.apply {
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns ReviewFixture.review.apply {
                     this.member.id = 1L
                     this.product.id = 1L
                 }
@@ -191,7 +190,7 @@ class ReviewServiceTest : DescribeSpec({
             context("주어진 reviewId로 Entity를 찾을 수 없을 경우") {
                 val deleteReviewRequest = DeleteReviewRequest(1L, 1L)
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns null
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns null
                 it("EntityNotFoundException이 발생한다.") {
                     shouldThrow<EntityNotFoundException> {
                         reviewService.deleteReview(deleteReviewRequest)
@@ -202,7 +201,7 @@ class ReviewServiceTest : DescribeSpec({
             context("리뷰를 생성한 멤버가 아닌 멤버가 삭제를 시도할 경우") {
                 val deleteReviewRequest = DeleteReviewRequest(1L, 1L)
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.seller.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns ReviewFixture.review.apply {
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns ReviewFixture.review.apply {
                     this.member.id = 2L
                     this.product.id = 1L
                 }
@@ -216,11 +215,11 @@ class ReviewServiceTest : DescribeSpec({
             context("위 사항이 모두 지켜졌을 경우") {
                 val deleteReviewRequest = DeleteReviewRequest(1L, 1L)
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-                every { reviewRepository.findByIdOrNull(any()) } returns ReviewFixture.review.apply {
+                every { reviewRepository.getReviewByIdOrNull(any()) } returns ReviewFixture.review.apply {
                     this.member.id = 1L
                     this.product.id = 1L
                 }
-                every { reviewRepository.delete(any()) } returns Unit
+                every { reviewRepository.deleteReview(any()) } returns Unit
                 it("Exception이 발생하지 않는다.") {
                     shouldNotThrow<CustomException> {
                         reviewService.deleteReview(deleteReviewRequest)
@@ -232,7 +231,7 @@ class ReviewServiceTest : DescribeSpec({
         describe("리뷰 조회 테스트") {
             context("멤버 아이디가 주어졌을 때") {
                 every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-                every { reviewRepository.findByMemberId(any()) } returns listOf(ReviewFixture.review.apply {
+                every { reviewRepository.getReviewsByMemberId(any()) } returns listOf(ReviewFixture.review.apply {
                     this.id = 1L
                 })
 
@@ -242,7 +241,7 @@ class ReviewServiceTest : DescribeSpec({
             }
             context("상품 아이디가 주어졌을 때") {
                 every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
-                every { reviewRepository.findByProductId(any()) } returns listOf(ReviewFixture.review.apply {
+                every { reviewRepository.getReviewsByProductId(any()) } returns listOf(ReviewFixture.review.apply {
                     this.id = 1L
                 })
 
