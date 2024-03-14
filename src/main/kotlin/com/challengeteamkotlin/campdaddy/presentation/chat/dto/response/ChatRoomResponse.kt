@@ -15,7 +15,7 @@ data class ChatRoomResponse(
         fun of(member: MemberEntity, product: ProductEntity, message: ChatMessageEntity?) =
             ChatRoomResponse(
                 nickname = member.nickname,
-                productImageUrl = product.images[0]?.imageUrl,
+                productImageUrl = product.images[0].imageUrl,
                 lastChatMessage = message?.message,
                 lastChatDate = message?.createdAt
             )

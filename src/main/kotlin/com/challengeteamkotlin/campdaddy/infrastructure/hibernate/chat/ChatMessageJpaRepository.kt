@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ChatMessageJpaRepository : JpaRepository<ChatMessageEntity, Long> {
     fun findByChatRoomId(roomId: Long): List<ChatMessageEntity>?
-    fun findFirstByChatRoomIdOrderByCreatedAt(roomId: Long): ChatMessageEntity?
+    fun findFirstByChatRoomIdOrderByCreatedAt(roomId: Long): ChatMessageEntity
 }

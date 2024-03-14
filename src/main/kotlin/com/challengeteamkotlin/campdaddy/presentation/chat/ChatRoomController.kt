@@ -29,7 +29,7 @@ class ChatRoomController(
 
     @GetMapping("/{roomId}")
     fun getChat(@PathVariable roomId: Long): ResponseEntity<ChatRoomDetailResponse> {
-        val chatList = chatRoomService.getChat(roomId)
+        val chatList = chatRoomService.getChatDetail(roomId)
 
         return ResponseEntity.ok().body(chatList)
     }
