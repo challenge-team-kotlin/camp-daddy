@@ -33,7 +33,7 @@ class ReservationService(
 
     @Transactional
     fun createReservation(memberId: Long, createReservationRequest: CreateReservationRequest) {
-        val memberEntity: MemberEntity = memberRepository.findByIdOrNull(memberId)
+        val memberEntity: MemberEntity = memberRepository.getMemberByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
         val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)

@@ -29,7 +29,7 @@ class ProductService(
 
     @Transactional
     fun createProduct(request: CreateProductRequest, memberId: Long): ProductResponse {
-        val userInfo = memberRepository.findByIdOrNull(memberId)
+        val userInfo = memberRepository.getMemberByIdOrNull(memberId)
                 ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return request.from(userInfo).apply {
@@ -139,7 +139,7 @@ class ProductService(
                     ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
     private fun getMember(memberId: Long): MemberEntity =
-            memberRepository.findByIdOrNull(memberId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
+            memberRepository.getMemberByIdOrNull(memberId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
     private fun checkAuthority(memberId: Long, checkMemberId: Long) {
         if (memberId != checkMemberId) throw UnAuthorizationException(ProductErrorCode.ACCESS_DENIED)

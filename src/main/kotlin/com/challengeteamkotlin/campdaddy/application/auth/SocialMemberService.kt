@@ -15,12 +15,12 @@ class SocialMemberService(
 
     fun registerIfAbsent(userInfo: OAuth2UserInfo): MemberEntity {
         val provider = OAuth2Provider.valueOf(userInfo.provider)
-        val existEmail = memberRepository.existsByEmail(userInfo.email)
+        val existEmail = memberRepository.existMemberByEmail(userInfo.email)
         if (existEmail) throw DuplicateEmailException(AuthErrorCode.DUPLICATE_EMAIL)
-        return if (memberRepository.existsByProviderAndProviderId(provider, userInfo.id)) {
-            memberRepository.findByProviderAndProviderId(provider, userInfo.id)
+        return if (memberRepository.existMemberByProviderAndProviderId(provider, userInfo.id)) {
+            memberRepository.findMemberByProviderAndProviderId(provider, userInfo.id)
         } else {
-            memberRepository.save(
+            memberRepository.createMember(
                 when (provider) {
                     OAuth2Provider.KAKAO -> {
                         MemberEntity.ofKakao(
