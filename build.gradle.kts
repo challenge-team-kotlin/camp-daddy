@@ -51,7 +51,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.h2database:h2")
 //    runtimeOnly("com.mysql:mysql-connector-j")
-//    runtimeOnly("org.postgresql:postgresql")
     // Redis
 //    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     // Validation
@@ -92,7 +91,6 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("com.h2database:h2:2.2.220")
-//    testImplementation("org.postgresql:postgresql")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.apache.commons:commons-lang3:3.14.0")
 
