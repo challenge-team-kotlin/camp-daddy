@@ -79,7 +79,7 @@ class ReservationServiceTest : DescribeSpec({
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
             every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
-                reservationRepository.findFirstByProductIdAndStartDateAndEndDate(any(), any(), any())
+                reservationRepository.getFirstReservation(any(), any(), any())
             } returns ReservationFixture.reservation
             it("EndDateLessThanStartDateException이 발생한다.") {
                 shouldThrow<EndDateLessThanStartDateException> {
@@ -92,9 +92,9 @@ class ReservationServiceTest : DescribeSpec({
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
             every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
-                reservationRepository.findFirstByProductIdAndStartDateAndEndDate(any(), any(), any())
+                reservationRepository.getFirstReservation(any(), any(), any())
             } returns null
-            every { reservationRepository.save(any()) } returns ReservationFixture.reservation
+            every { reservationRepository.createReservation(any()) } returns ReservationFixture.reservation
             it("Exception이 발생하지 않는다.") {
                 shouldNotThrow<CustomException> {
                     reservationService.createReservation(1L, createReservationRequest)
@@ -105,7 +105,7 @@ class ReservationServiceTest : DescribeSpec({
 
     describe("예약 수정 테스트") {
         context("주어진 memberId가 buyer, seller 모두 아닐 경우") {
-            every { reservationRepository.findByIdOrNull(1L) } returns
+            every { reservationRepository.getReservationByIdOrNull(1L) } returns
                     ReservationFixture.reservation.apply {
                         member.id = 1L
                         product.member.id = 2L
@@ -118,7 +118,7 @@ class ReservationServiceTest : DescribeSpec({
             }
         }
         context("Req에서 Confirm으로 변경을 buyer가 요청한 경우") {
-            every { reservationRepository.findByIdOrNull(1L) } returns
+            every { reservationRepository.getReservationByIdOrNull(1L) } returns
                     ReservationFixture.reservation.apply {
                         member.id = 1L
                         product.member.id = 2L
@@ -131,7 +131,7 @@ class ReservationServiceTest : DescribeSpec({
             }
         }
         context("Req에서 Confirm으로 변경을 seller가 요청한 경우") {
-            every { reservationRepository.findByIdOrNull(1L) } returns
+            every { reservationRepository.getReservationByIdOrNull(1L) } returns
                     ReservationFixture.reservation.apply {
                         member.id = 1L
                         product.member.id = 2L
@@ -146,7 +146,7 @@ class ReservationServiceTest : DescribeSpec({
 
     describe("예약 단건 조회") {
         context("주어진 reservationId의 데이터가 없을 경우") {
-            every { reservationRepository.findByIdOrNull(any()) } returns null
+            every { reservationRepository.getReservationByIdOrNull(any()) } returns null
             it("EntityNotFoundException이 발생한다.") {
                 shouldThrow<EntityNotFoundException> {
                     reservationService.getReservation(1L)
@@ -154,7 +154,7 @@ class ReservationServiceTest : DescribeSpec({
             }
         }
         context("주어진 reservationId의 데이터가 있을 경우") {
-            every { reservationRepository.findByIdOrNull(1L) } returns ReservationFixture.reservation.apply {
+            every { reservationRepository.getReservationByIdOrNull(1L) } returns ReservationFixture.reservation.apply {
                 this.id = 1L
                 this.member.id = 1L
                 this.product.id = 1L

@@ -17,7 +17,6 @@ import com.challengeteamkotlin.campdaddy.presentation.review.dto.request.PatchRe
 import com.challengeteamkotlin.campdaddy.presentation.review.dto.response.ReviewResponse
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -71,7 +70,7 @@ class ReviewServiceTest : DescribeSpec({
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
             every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
-                reservationRepository.existsByProductIdAndMemberIdAndReservationStatus(
+                reservationRepository.isExistsReservation(
                     any(), any(), any()
                 )
             } returns false
@@ -89,7 +88,7 @@ class ReviewServiceTest : DescribeSpec({
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
             every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
-                reservationRepository.existsByProductIdAndMemberIdAndReservationStatus(
+                reservationRepository.isExistsReservation(
                     any(), any(), any()
                 )
             } returns true
@@ -107,7 +106,7 @@ class ReviewServiceTest : DescribeSpec({
             every { memberRepository.findByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
             every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
-                reservationRepository.existsByProductIdAndMemberIdAndReservationStatus(
+                reservationRepository.isExistsReservation(
                     any(), any(), any()
                 )
             } returns true

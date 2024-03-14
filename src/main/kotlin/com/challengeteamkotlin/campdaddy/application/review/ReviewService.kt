@@ -119,7 +119,7 @@ class ReviewService(
 
     private fun checkBoughtBefore(productId: Long, memberId: Long): Boolean {
         return reservationRepository
-            .existsByProductIdAndMemberIdAndReservationStatus(
+            .isExistsReservation(
                 productId, memberId, ReservationStatus.END
             )
     }
