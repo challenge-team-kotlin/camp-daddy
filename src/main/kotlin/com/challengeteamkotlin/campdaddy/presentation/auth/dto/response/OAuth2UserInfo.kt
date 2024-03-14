@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.OAuth2User
 
 class OAuth2UserInfo(
-    val id: String,
+    var id: String,
     val provider: String,
     val email: String,
     @get:JvmName("name")
