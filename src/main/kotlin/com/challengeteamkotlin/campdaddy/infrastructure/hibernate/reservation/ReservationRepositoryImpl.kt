@@ -6,10 +6,8 @@ import com.challengeteamkotlin.campdaddy.domain.repository.reservation.Reservati
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
-@Repository
 class ReservationRepositoryImpl(
     private val reservationJpaRepository: ReservationJpaRepository
 ) : ReservationRepository {
