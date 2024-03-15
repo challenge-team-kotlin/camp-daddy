@@ -10,6 +10,7 @@ import org.hibernate.annotations.SQLRestriction
 @Entity
 @Table(name = "reviews")
 @SQLDelete(sql = "UPDATE reviews SET is_deleted = true WHERE review_id = ?")
+@SQLRestriction("is_deleted = false")
 class ReviewEntity(
         @Column(name = "content")
         var content: String,

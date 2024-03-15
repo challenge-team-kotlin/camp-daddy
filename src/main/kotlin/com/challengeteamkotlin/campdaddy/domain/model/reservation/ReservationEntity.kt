@@ -11,6 +11,7 @@ import java.time.LocalDate
 @Entity
 @Table(name = "reservations")
 @SQLDelete(sql = "UPDATE reservations SET is_deleted = true WHERE reservation_id = ?")
+@SQLRestriction("is_deleted = false")
 class ReservationEntity(
     @Column(name = "start_date", nullable = false)
     val startDate: LocalDate,
