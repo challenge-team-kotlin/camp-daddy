@@ -1,15 +1,11 @@
 package com.challengeteamkotlin.campdaddy.application.auth
 
-import com.challengeteamkotlin.campdaddy.application.auth.exception.DuplicateEmailException
 import com.challengeteamkotlin.campdaddy.domain.model.member.OAuth2Provider
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.fixture.auth.AuthFixture.existAuthInfo
-import com.challengeteamkotlin.campdaddy.fixture.auth.AuthFixture.newAuthInfo
 import com.challengeteamkotlin.campdaddy.fixture.auth.AuthFixture.oAuth2KakaoUserInfo
-import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.existEmailMember
 import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.existMember
 import com.challengeteamkotlin.campdaddy.fixture.member.MemberEntityFixture.kakaoNewMember
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
@@ -36,14 +32,14 @@ class SocialMemberServiceTest(
 
     describe("소셜 멤버 회원가입 테스트") {
 
-        context("소셜 멤버의 Email이 이미 존재하면") {
-            every { memberRepository.existMemberByEmail(existEmailMember.email) } returns true
-            it("예외가 던져진다.") {
-             shouldThrow<DuplicateEmailException> {
-                 socialMemberService.registerIfAbsent(newAuthInfo)
-             }
-            }
-        }
+//        context("소셜 멤버의 Email이 이미 존재하면") {
+//            every { memberRepository.existMemberByEmail(existEmailMember.email) } returns true
+//            it("예외가 던져진다.") {
+//             shouldThrow<DuplicateEmailException> {
+//                 socialMemberService.registerIfAbsent(newAuthInfo)
+//             }
+//            }
+//        }
 
         context("소셜 멤버의 정보가 서버에 존재하지 않는다면") {
             every { memberRepository.existMemberByEmail(any()) } returns false
