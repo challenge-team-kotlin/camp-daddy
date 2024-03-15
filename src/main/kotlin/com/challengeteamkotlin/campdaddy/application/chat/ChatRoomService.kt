@@ -13,9 +13,9 @@ import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.CreateCha
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomDetailResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.MessageResponse
-import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChatRoomService(
@@ -36,6 +36,7 @@ class ChatRoomService(
         }
     }
 
+    @Transactional(readOnly = true)
     fun getPersonalChatList(memberId: Long): List<ChatRoomResponse>? {
         val member = memberRepository.getMemberByIdOrNull(memberId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
 
@@ -49,6 +50,7 @@ class ChatRoomService(
         } ?: emptyList()
     }
 
+    @Transactional(readOnly = true)
     fun getChatDetail(roomId: Long): ChatRoomDetailResponse {
         val chatRoom = getChatRoom(roomId)
         val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!)?.map {
