@@ -14,6 +14,9 @@ class OAuth2UserService(
         val originUser = super.loadUser(userRequest)
         val provider = userRequest.clientRegistration.clientName
         return OAuth2UserInfo.of(provider, userRequest, originUser)
-            .also { socialMemberService.registerIfAbsent(it) }
+            .also {
+                val memberEntity = socialMemberService.registerIfAbsent(it)
+                it.id = memberEntity.id!!.toString()
+            }
     }
 }
