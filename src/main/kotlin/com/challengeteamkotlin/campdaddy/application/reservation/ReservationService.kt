@@ -35,7 +35,7 @@ class ReservationService(
     fun createReservation(memberId: Long, createReservationRequest: CreateReservationRequest) {
         val memberEntity: MemberEntity = memberRepository.getMemberByIdOrNull(memberId)
             ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val productEntity = productRepository.findByIdOrNull(createReservationRequest.productId)
+        val productEntity = productRepository.getProductById(createReservationRequest.productId)
             ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
 

@@ -57,7 +57,12 @@ class ProductEntity(
         mutableImages.remove(productImage)
     }
 
-
-    //dto => entity
+    fun getFirstImage(): String? {
+        return if (images.isEmpty()) {
+            null
+        } else {
+            images[0].imageUrl
+        }
+    }
 
 }

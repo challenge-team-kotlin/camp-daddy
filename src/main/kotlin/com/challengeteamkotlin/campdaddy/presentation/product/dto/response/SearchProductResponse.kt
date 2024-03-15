@@ -8,7 +8,7 @@ data class SearchProductResponse(
         val content: String,
         val memberNickName: String?,
         val pricePerDay: Long,
-        val imageUrl: String,
+        val imageUrl: String?,
 ) {
     companion object {
         fun of(productEntity: ProductEntity): SearchProductResponse =
@@ -18,7 +18,7 @@ data class SearchProductResponse(
                         content = productEntity.content,
                         memberNickName = productEntity.member.nickname,
                         pricePerDay = productEntity.pricePerDay,
-                        imageUrl = productEntity.images[0].imageUrl
+                        imageUrl = productEntity.getFirstImage()
                 )
 
     }

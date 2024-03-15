@@ -7,7 +7,7 @@ import org.hibernate.annotations.SQLDelete
 
 @Entity
 @Table(name = "members")
-@SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE member_id = ?")
 class MemberEntity(
     @Column(name = "email", nullable = false, unique = true)
     val email: String,
