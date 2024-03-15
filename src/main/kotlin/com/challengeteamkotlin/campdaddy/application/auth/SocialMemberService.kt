@@ -1,7 +1,5 @@
 package com.challengeteamkotlin.campdaddy.application.auth
 
-import com.challengeteamkotlin.campdaddy.application.auth.exception.AuthErrorCode
-import com.challengeteamkotlin.campdaddy.application.auth.exception.DuplicateEmailException
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.member.OAuth2Provider
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
@@ -15,8 +13,6 @@ class SocialMemberService(
 
     fun registerIfAbsent(userInfo: OAuth2UserInfo): MemberEntity {
         val provider = OAuth2Provider.valueOf(userInfo.provider)
-        val existEmail = memberRepository.existMemberByEmail(userInfo.email)
-        if (existEmail) throw DuplicateEmailException(AuthErrorCode.DUPLICATE_EMAIL)
         return if (memberRepository.existMemberByProviderAndProviderId(provider, userInfo.id)) {
             memberRepository.findMemberByProviderAndProviderId(provider, userInfo.id)
         } else {
