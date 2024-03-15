@@ -47,7 +47,7 @@ class ReservationServiceTest : DescribeSpec({
         context("주어진 memberId로 Entity를 찾을 수 없을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
             every { memberRepository.getMemberByIdOrNull(any()) } returns null
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             it("EntityNotFoundException이 발생한다.") {
                 shouldThrow<EntityNotFoundException> {
                     reservationService.createReservation(1L, createReservationRequest)
@@ -57,7 +57,7 @@ class ReservationServiceTest : DescribeSpec({
         context("주어진 productId로 Entity를 찾을 수 없을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns null
+            every { productRepository.getProductById(any()) } returns null
             it("EntityNotFoundException이 발생한다.") {
                 shouldThrow<EntityNotFoundException> {
                     reservationService.createReservation(1L, createReservationRequest)
@@ -67,7 +67,7 @@ class ReservationServiceTest : DescribeSpec({
         context("endDate가 startDate보다 작을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.tomorrow, DateFixture.today)
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             it("EndDateLessThanStartDateException이 발생한다.") {
                 shouldThrow<EndDateLessThanStartDateException> {
                     reservationService.createReservation(1L, createReservationRequest)
@@ -77,7 +77,7 @@ class ReservationServiceTest : DescribeSpec({
         context("이미 예약이 이루어져 있을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.tomorrow, DateFixture.today)
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
                 reservationRepository.getFirstReservation(any(), any(), any())
             } returns ReservationFixture.reservation
@@ -90,7 +90,7 @@ class ReservationServiceTest : DescribeSpec({
         context("위 사항이 모두 지켜졌을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
                 reservationRepository.getFirstReservation(any(), any(), any())
             } returns null

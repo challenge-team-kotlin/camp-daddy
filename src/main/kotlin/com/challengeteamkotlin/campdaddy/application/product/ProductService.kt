@@ -37,7 +37,7 @@ class ProductService(
                 ProductImageEntity(this, it)
             }
         }.run {
-            productRepository.save(this)
+            productRepository.create(this)
         }.let {
             ProductResponse.from(it)
         }
@@ -63,7 +63,7 @@ class ProductService(
                 .filterNot { product.images.map { images -> images.imageUrl }.contains(it) }
                 .forEach { product.uploadImage(ProductImageEntity(product, it)) }
 
-        productRepository.save(product)
+        productRepository.create(product)
 
         return ProductResponse.from(product)
     }
@@ -80,7 +80,7 @@ class ProductService(
 
     @Transactional
     fun getProductDetail(productId: Long): ProductResponse =
-            productRepository.findByIdOrNull(productId)?.let {
+            productRepository.getProductById(productId)?.let {
                 ProductResponse.from(it)
             } ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
@@ -88,13 +88,13 @@ class ProductService(
     @Transactional
     fun getProductList(request: SearchProductRequest, pageable: Pageable): Slice<*> {
         if (request.search != null) {
-            return if (request.filterReservation) productRepository.findBySearchableAndReservationFilter(
+            return if (request.filterReservation) productRepository.getProductBySearchableAndReservationFilter(
                     startDate = request.startDate,
                     endDate = request.endDate,
                     category = request.category,
                     search = request.search,
                     pageable = pageable,
-            ) else productRepository.findBySearchableAndReservation(
+            ) else productRepository.getProductBySearchableAndReservation(
                     startDate = request.startDate,
                     endDate = request.endDate,
                     category = request.category,
@@ -104,7 +104,7 @@ class ProductService(
 
         } else if (request.filterReservation) {
             //검색어가 제공되지않고 모든 상품을 조회할때.
-            return productRepository.findByReservationFilter(
+            return productRepository.getProductByReservationFilter(
                     startDate = request.startDate,
                     endDate = request.endDate,
                     category = request.category,
@@ -112,7 +112,7 @@ class ProductService(
             )
         } else {
             //검색어가 제공되지않고 모든 상품을 볼때
-            return productRepository.findByReservation(
+            return productRepository.getProductByReservation(
                     startDate = request.startDate,
                     endDate = request.endDate,
                     category = request.category,
@@ -123,7 +123,7 @@ class ProductService(
 
     @Transactional
     fun getMemberProductList(memberId: Long): List<GetProductByMemberResponse> =
-            productRepository.findByMemberId(memberId).map {
+            productRepository.getProductByMemberId(memberId).map {
                 GetProductByMemberResponse.from(it)
             }
 
@@ -135,7 +135,7 @@ class ProductService(
     }
 
     private fun getProduct(productId: Long): ProductEntity =
-            productRepository.findByIdOrNull(productId)
+            productRepository.getProductById(productId)
                     ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
     private fun getMember(memberId: Long): MemberEntity =

@@ -57,7 +57,7 @@ class ReviewServiceTest : DescribeSpec({
             val createReservationRequest =
                 CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns null
+            every { productRepository.getProductById(any()) } returns null
             it("EntityNotFoundException이 발생한다.") {
                 shouldThrow<EntityNotFoundException> {
                     reviewService.createReview(1L, createReservationRequest)
@@ -68,7 +68,7 @@ class ReviewServiceTest : DescribeSpec({
             val createReservationRequest =
                 CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
                 reservationRepository.isExistsReservation(
                     any(), any(), any()
@@ -86,7 +86,7 @@ class ReviewServiceTest : DescribeSpec({
             val createReservationRequest =
                 CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
                 reservationRepository.isExistsReservation(
                     any(), any(), any()
@@ -104,7 +104,7 @@ class ReviewServiceTest : DescribeSpec({
             val createReservationRequest =
                 CreateReviewRequest("리뷰 테스트", 1L, 5, listOf("https://image1.com", "https://image2.com"))
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
             every {
                 reservationRepository.isExistsReservation(
                     any(), any(), any()
@@ -240,7 +240,7 @@ class ReviewServiceTest : DescribeSpec({
                 }
             }
             context("상품 아이디가 주어졌을 때") {
-                every { productRepository.findByIdOrNull(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+                every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
                 every { reviewRepository.getReviewsByProductId(any()) } returns listOf(ReviewFixture.review.apply {
                     this.id = 1L
                 })

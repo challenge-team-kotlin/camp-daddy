@@ -28,7 +28,7 @@ class ChatRoomService(
     @Transactional
     fun createChat(request: CreateChatRoomRequest): Long {
         val buyer = memberRepository.getMemberByIdOrNull(request.buyerId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val product = productRepository.findByIdOrNull(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
+        val product = productRepository.getProductById(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
         return when (val chatRoom = chatRoomRepository.getChatRoomByBuyerIdAndProductId(request.buyerId, request.productId)) {
             null -> chatRoomRepository.createChat(request.of(buyer, product.member, product)).id!!
