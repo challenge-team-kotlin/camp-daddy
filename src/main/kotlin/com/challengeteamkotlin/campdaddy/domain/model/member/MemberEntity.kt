@@ -4,10 +4,12 @@ import com.challengeteamkotlin.campdaddy.common.entity.BaseEntity
 import com.challengeteamkotlin.campdaddy.presentation.member.dto.request.UpdateProfileRequest
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "members")
 @SQLDelete(sql = "UPDATE members SET is_deleted = true WHERE member_id = ?")
+@SQLRestriction("is_deleted = false")
 class MemberEntity(
     @Column(name = "email", nullable = false, unique = true)
     val email: String,

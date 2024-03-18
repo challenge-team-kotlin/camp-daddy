@@ -5,10 +5,12 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.review.ReviewEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "products")
 @SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id = ?")
+@SQLRestriction("is_deleted = false")
 class ProductEntity(
 
         @ManyToOne(fetch = FetchType.LAZY)

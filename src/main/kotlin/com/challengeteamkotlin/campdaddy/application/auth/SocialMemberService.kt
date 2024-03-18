@@ -1,5 +1,7 @@
 package com.challengeteamkotlin.campdaddy.application.auth
 
+import com.challengeteamkotlin.campdaddy.application.auth.exception.AuthErrorCode
+import com.challengeteamkotlin.campdaddy.application.auth.exception.DuplicateEmailException
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.member.OAuth2Provider
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
