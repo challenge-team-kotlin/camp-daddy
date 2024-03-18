@@ -9,8 +9,8 @@ import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "products")
-@SQLRestriction("is_deleted = false")
 @SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE product_id = ?")
+@SQLRestriction("is_deleted = false")
 class ProductEntity(
 
         @ManyToOne(fetch = FetchType.LAZY)

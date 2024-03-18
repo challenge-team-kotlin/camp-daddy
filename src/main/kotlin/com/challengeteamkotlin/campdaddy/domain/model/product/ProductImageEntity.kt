@@ -8,7 +8,6 @@ import org.hibernate.annotations.SQLRestriction
 import org.hibernate.annotations.Where
 
 @Entity
-@Embeddable
 @Table(name = "products_image")
 @SQLDelete(sql = "UPDATE products_image SET is_deleted = true WHERE product_image_id = ?")
 @SQLRestriction("is_deleted = false")
