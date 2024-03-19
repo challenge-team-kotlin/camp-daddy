@@ -7,15 +7,16 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.OAuth2User
 
 class OAuth2UserInfo(
-    var id: String,
+    var providerId: String,
     val provider: String,
     val email: String,
     @get:JvmName("name")
     val name: String
 ) : OAuth2User {
 
+    var memberId = 0L
     override fun getName(): String {
-        return "$provider : $id"
+        return "$provider : $providerId"
     }
 
     override fun getAttributes(): MutableMap<String, Any> {
@@ -44,7 +45,7 @@ private fun ofKakao(provider: String, userRequest: OAuth2UserRequest, originUser
     val name = account["name"] ?: ""
 
     return OAuth2UserInfo(
-        id = (originUser.attributes[userNameAttributeName] as Long).toString(),
+        providerId = (originUser.attributes[userNameAttributeName] as Long).toString(),
         provider = provider.uppercase(),
         email = email as String,
         name = name as String,
@@ -56,10 +57,10 @@ private fun ofNaver(provider: String, userRequest: OAuth2UserRequest, originUser
     val response = originUser.attributes[userNameAttributeName] as Map <*, *>
     val email = response["email"] ?: ""
     val name = response["name"] ?: ""
-    val id = response["id"] ?: ""
+    val providerId = response["id"] ?: ""
 
     return OAuth2UserInfo(
-        id = id as String,
+        providerId = providerId as String,
         provider = provider.uppercase(),
         email = email as String,
         name = name as String,
@@ -72,7 +73,7 @@ private fun ofGoogle(provider: String, userRequest: OAuth2UserRequest, originUse
     val name = originUser.attributes["name"] ?: ""
 
     return OAuth2UserInfo(
-        id = originUser.attributes[userNameAttributeName]?.toString() ?: "",
+        providerId = originUser.attributes[userNameAttributeName]?.toString() ?: "",
         provider = provider.uppercase(),
         email = email as String,
         name = name as String,

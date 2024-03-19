@@ -22,7 +22,7 @@ class OAuth2LoginSuccessHandler(
     ) {
         val userInfo = authentication.principal as OAuth2UserInfo
         val accessToken = jwtPlugin.generateAccessToken(
-            subject = userInfo.id,
+            subject = userInfo.memberId.toString(),
             email = userInfo.email,
             role = MemberRole.MEMBER.name
         )

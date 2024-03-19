@@ -15,36 +15,24 @@ class SocialMemberService(
 
     fun registerIfAbsent(userInfo: OAuth2UserInfo): MemberEntity {
         val provider = OAuth2Provider.valueOf(userInfo.provider)
-        return if (memberRepository.existMemberByProviderAndProviderId(provider, userInfo.id)) {
-            memberRepository.findMemberByProviderAndProviderId(provider, userInfo.id)
+        val existMember = memberRepository.existMemberByProviderAndProviderId(provider, userInfo.providerId)
+        return if (existMember) {
+            // 이미 가입한 회원인 경우
+            memberRepository.findMemberByProviderAndProviderId(provider, userInfo.providerId)
         } else {
-            memberRepository.createMember(
-                when (provider) {
-                    OAuth2Provider.KAKAO -> {
-                        MemberEntity.ofKakao(
-                            id = userInfo.id,
-                            email = userInfo.email,
-                            name = userInfo.name
-                        )
-                    }
-
-                    OAuth2Provider.NAVER -> {
-                        MemberEntity.ofNaver(
-                            id = userInfo.id,
-                            email = userInfo.email,
-                            name = userInfo.name
-                        )
-                    }
-
-                    OAuth2Provider.GOOGLE -> {
-                        MemberEntity.ofGoogle(
-                            id = userInfo.id,
-                            email = userInfo.email,
-                            name = userInfo.name
-                        )
-                    }
+            // 이메일이 이미 존재하는 경우
+            val existEmail = memberRepository.existMemberByEmail(userInfo.email)
+            if(existEmail) {
+                throw DuplicateEmailException(AuthErrorCode.DUPLICATE_EMAIL)
+            } else {
+                // 이메일이 중복되지 않는 경우, 새회원
+                val newMember = when (provider) {
+                    OAuth2Provider.KAKAO -> MemberEntity.ofKakao(userInfo.providerId, userInfo.email, userInfo.name)
+                    OAuth2Provider.NAVER -> MemberEntity.ofNaver(userInfo.providerId, userInfo.email, userInfo.name)
+                    OAuth2Provider.GOOGLE -> MemberEntity.ofGoogle(userInfo.providerId, userInfo.email, userInfo.name)
                 }
-            )
+                memberRepository.createMember(newMember)
+            }
         }
     }
 }

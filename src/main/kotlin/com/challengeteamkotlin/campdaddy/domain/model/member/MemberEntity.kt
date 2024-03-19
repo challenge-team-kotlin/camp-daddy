@@ -21,8 +21,7 @@ class MemberEntity(
     val provider: OAuth2Provider,
 
     @Column(name = "provider_id")
-    val providerId: String,
-
+    val providerId: String
 
     ) : BaseEntity() {
     @Id
@@ -38,28 +37,28 @@ class MemberEntity(
     }
 
     companion object {
-        fun ofKakao(id: String, email: String, name: String): MemberEntity {
+        fun ofKakao(providerId: String, email: String, name: String): MemberEntity {
             return MemberEntity(
                 provider = OAuth2Provider.KAKAO,
-                providerId = id,
+                providerId = providerId,
                 email = email,
                 name = name
             )
         }
 
-        fun ofNaver(id: String, email: String, name: String): MemberEntity {
+        fun ofNaver(providerId: String, email: String, name: String): MemberEntity {
             return MemberEntity(
                 provider = OAuth2Provider.NAVER,
-                providerId = id,
+                providerId = providerId,
                 email = email,
                 name = name
             )
         }
 
-        fun ofGoogle(id: String, email: String, name: String): MemberEntity {
+        fun ofGoogle(providerId: String, email: String, name: String): MemberEntity {
             return MemberEntity(
                 provider = OAuth2Provider.GOOGLE,
-                providerId = id,
+                providerId = providerId,
                 email = email,
                 name = name
             )
