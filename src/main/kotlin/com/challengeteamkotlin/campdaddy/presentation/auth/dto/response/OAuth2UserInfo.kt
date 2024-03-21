@@ -10,11 +10,7 @@ class OAuth2UserInfo(
     var providerId: String,
     val provider: String,
     val email: String,
-    @get:JvmName("name")
-    val name: String
 ) : OAuth2User {
-
-    var memberId = 0L
     override fun getName(): String {
         return "$provider : $providerId"
     }
@@ -42,13 +38,12 @@ private fun ofKakao(provider: String, userRequest: OAuth2UserRequest, originUser
     val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
     val account = originUser.attributes["kakao_account"] as Map<*, *>
     val email = account["email"] ?: ""
-    val name = account["name"] ?: ""
+
 
     return OAuth2UserInfo(
         providerId = (originUser.attributes[userNameAttributeName] as Long).toString(),
         provider = provider.uppercase(),
         email = email as String,
-        name = name as String,
     )
 }
 
@@ -56,26 +51,22 @@ private fun ofNaver(provider: String, userRequest: OAuth2UserRequest, originUser
     val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
     val response = originUser.attributes[userNameAttributeName] as Map <*, *>
     val email = response["email"] ?: ""
-    val name = response["name"] ?: ""
     val providerId = response["id"] ?: ""
 
     return OAuth2UserInfo(
         providerId = providerId as String,
         provider = provider.uppercase(),
         email = email as String,
-        name = name as String,
     )
 }
 
 private fun ofGoogle(provider: String, userRequest: OAuth2UserRequest, originUser: OAuth2User): OAuth2UserInfo {
     val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
     val email = originUser.attributes["email"] ?: ""
-    val name = originUser.attributes["name"] ?: ""
 
     return OAuth2UserInfo(
         providerId = originUser.attributes[userNameAttributeName]?.toString() ?: "",
         provider = provider.uppercase(),
         email = email as String,
-        name = name as String,
     )
 }

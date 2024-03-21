@@ -5,7 +5,7 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 data class MemberResponse(
     val id: Long,
     val email: String,
-    val name: String,
+    val name: String?,
     val nickname: String?
 ) {
     companion object {

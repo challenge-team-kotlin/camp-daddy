@@ -10,12 +10,12 @@ object MemberEntityFixture {
     val socialMemberRequest = UpdateProfileRequest("이승상승상")
 
     // Entity
-    val testPerson = MemberEntity("test@kakao.com", "이승상", OAuth2Provider.KAKAO, "1234")
-    val existEmailMember = MemberEntity("test@test.com", "test", OAuth2Provider.KAKAO, "1234")
-    val socialExistMember = MemberEntity("seungsang@kakao.com", "이승상", OAuth2Provider.KAKAO, "1234")
-    val existMember = MemberEntity("exist@mail.com", "exist", OAuth2Provider.KAKAO, "1234")
-    val kakaoNewMember = MemberEntity("test@kakao.com", "kakao", OAuth2Provider.KAKAO, "1234")
-    val socialUpdatedMember = MemberEntity("seungsang@kakao.com", "이승상승상", OAuth2Provider.KAKAO, "1234")
+    val testPerson = MemberEntity("test@kakao.com", OAuth2Provider.KAKAO, "1234", "이승상", "승상승")
+//    val existEmailMember = MemberEntity("test@test.com", "test", OAuth2Provider.KAKAO, "1234")
+//    val socialExistMember = MemberEntity("seungsang@kakao.com", "이승상", OAuth2Provider.KAKAO, "1234")
+//    val existMember = MemberEntity("exist@mail.com", "exist", OAuth2Provider.KAKAO, "1234")
+//    val kakaoNewMember = MemberEntity("test@kakao.com", "kakao", OAuth2Provider.KAKAO, "1234")
+//    val socialUpdatedMember = MemberEntity("seungsang@kakao.com", "이승상승상", OAuth2Provider.KAKAO, "1234")
     // Response
-    val socialExistMemberResponse = MemberResponse(1, socialExistMember.email, socialExistMember.name, socialExistMember.nickname)
+//    val socialExistMemberResponse = MemberResponse(1, socialExistMember.email, socialExistMember.name, socialExistMember.nickname)
 }

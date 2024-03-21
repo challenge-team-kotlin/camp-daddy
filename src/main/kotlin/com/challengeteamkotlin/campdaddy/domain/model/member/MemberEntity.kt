@@ -14,55 +14,25 @@ class MemberEntity(
     @Column(name = "email", nullable = false, unique = true)
     val email: String,
 
-    @Column(name = "name", nullable = false)
-    var name: String,
-
     @Enumerated(EnumType.STRING)
     val provider: OAuth2Provider,
 
     @Column(name = "provider_id")
-    val providerId: String
+    val providerId: String,
+    @Column(name = "name", nullable = false)
+    var name: String,
 
-    ) : BaseEntity() {
+    @Column(name = "nickname", nullable = true, unique = true)
+    var nickname: String
+
+) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     var id: Long? = null
 
-    @Column(name = "nickname", nullable = true, unique = true)
-    var nickname: String? = null
-
     fun toUpdate(request: UpdateProfileRequest) {
-        nickname = request.nickname ?: null
-    }
-
-    companion object {
-        fun ofKakao(providerId: String, email: String, name: String): MemberEntity {
-            return MemberEntity(
-                provider = OAuth2Provider.KAKAO,
-                providerId = providerId,
-                email = email,
-                name = name
-            )
-        }
-
-        fun ofNaver(providerId: String, email: String, name: String): MemberEntity {
-            return MemberEntity(
-                provider = OAuth2Provider.NAVER,
-                providerId = providerId,
-                email = email,
-                name = name
-            )
-        }
-
-        fun ofGoogle(providerId: String, email: String, name: String): MemberEntity {
-            return MemberEntity(
-                provider = OAuth2Provider.GOOGLE,
-                providerId = providerId,
-                email = email,
-                name = name
-            )
-        }
+        nickname = request.nickname
     }
 }
 
