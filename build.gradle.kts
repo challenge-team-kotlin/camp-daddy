@@ -103,6 +103,11 @@ dependencies {
     implementation("org.webjars:sockjs-client:1.1.2")
     implementation("org.webjars:stomp-websocket:2.3.3-1")
 
+    // aws sqs, sns / up to java 11
+    implementation(platform("software.amazon.awssdk:bom:2.20.54"))
+    implementation("software.amazon.awssdk:sns")
+    implementation("software.amazon.awssdk:sqs")
+
 
 }
 

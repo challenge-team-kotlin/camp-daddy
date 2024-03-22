@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class ReservationConfig {
+class ReservationRepositoryConfig {
 
     @Bean
     fun reservationRepository(jpaRepository: ReservationJpaRepository): ReservationRepository {

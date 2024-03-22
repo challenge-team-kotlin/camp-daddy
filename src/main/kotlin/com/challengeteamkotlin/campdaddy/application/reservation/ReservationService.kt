@@ -8,16 +8,17 @@ import com.challengeteamkotlin.campdaddy.application.reservation.exception.Inval
 import com.challengeteamkotlin.campdaddy.application.reservation.exception.ReservationErrorCode
 import com.challengeteamkotlin.campdaddy.application.reservation.handler.PatchReservationHandler
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
+import com.challengeteamkotlin.campdaddy.domain.event.reservation.ReservationEventPublisher
 import com.challengeteamkotlin.campdaddy.domain.model.member.MemberEntity
 import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.reservation.ReservationRepository
+import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.event.ReservationEvent
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.reqeust.CreateReservationRequest
 import com.challengeteamkotlin.campdaddy.presentation.reservation.dto.response.ReservationResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -28,7 +29,8 @@ class ReservationService(
     private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
     private val reservationRepository: ReservationRepository,
-    private val patchReservationHandler: PatchReservationHandler
+    private val patchReservationHandler: PatchReservationHandler,
+    private val reservationEventPublisher: ReservationEventPublisher
 ) {
 
     @Transactional
@@ -52,9 +54,12 @@ class ReservationService(
         val totalPrice = productEntity.pricePerDay *
                 getDateDiff(createReservationRequest.startDate, createReservationRequest.endDate)
 
-        createReservationRequest
+        val reservationEntity = createReservationRequest
             .of(productEntity, memberEntity, totalPrice)
             .apply { reservationRepository.createReservation(this) }
+
+        reservationEventPublisher.publish(ReservationEvent.of(reservationEntity))
+
     }
 
     @Transactional
@@ -71,6 +76,9 @@ class ReservationService(
         }
 
         reservation.reservationStatus = reservationStatus
+
+        reservationEventPublisher.publish(ReservationEvent.of(reservation))
+
     }
 
     @Transactional(readOnly = true)
