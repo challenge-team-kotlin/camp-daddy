@@ -12,8 +12,7 @@ import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductReposi
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.CreateChatRoomRequest
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomDetailResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomResponse
-import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.MessageResponse
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -51,11 +50,9 @@ class ChatRoomService(
     }
 
     @Transactional(readOnly = true)
-    fun getChatDetail(roomId: Long): ChatRoomDetailResponse {
+    fun getChatDetail(roomId: Long, page: Pageable): ChatRoomDetailResponse {
         val chatRoom = getChatRoom(roomId)
-        val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!)?.map {
-            MessageResponse.from(it)
-        } ?: emptyList()
+        val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!, page)
 
         return ChatRoomDetailResponse.of(chatRoom, chatMessages)
     }
