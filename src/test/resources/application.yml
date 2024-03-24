@@ -69,3 +69,12 @@ auth:
     accessTokenExpirationHour: ${JWT_ACCESS_EXPIRATION_HOUR}
 
 
+aws:
+  region: ap-northeast-2
+  sns-account:
+    access-key: ${SNS_ACCESS_KEY}
+    secret-key: ${SNS_SECRET_KEY}
+  sns-arn:
+    reservation-change: ${SNS_RESERVATION_ARN}
+  sqs-name:
+    reservation-change-queue: ${SQS_RESERVATION_NAME}

@@ -5,6 +5,7 @@ import com.challengeteamkotlin.campdaddy.application.reservation.exception.Inval
 import com.challengeteamkotlin.campdaddy.application.reservation.handler.PatchReservationHandler
 import com.challengeteamkotlin.campdaddy.common.exception.CustomException
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
+import com.challengeteamkotlin.campdaddy.domain.event.reservation.ReservationEventPublisher
 import com.challengeteamkotlin.campdaddy.domain.model.reservation.ReservationStatus
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.product.ProductRepository
@@ -25,7 +26,6 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.data.repository.findByIdOrNull
 
 @ExtendWith(MockKExtension::class)
 class ReservationServiceTest : DescribeSpec({
@@ -39,9 +39,16 @@ class ReservationServiceTest : DescribeSpec({
     val memberRepository = mockk<MemberRepository>()
     val reservationRepository = mockk<ReservationRepository>()
     val patchReservationHandler = PatchReservationHandler()
+    val reservationEventPublisher = mockk<ReservationEventPublisher>(relaxed = true)
 
     val reservationService =
-        ReservationService(productRepository, memberRepository, reservationRepository, patchReservationHandler)
+        ReservationService(
+            productRepository,
+            memberRepository,
+            reservationRepository,
+            patchReservationHandler,
+            reservationEventPublisher
+        )
 
     describe("예약 생성 테스트") {
         context("주어진 memberId로 Entity를 찾을 수 없을 경우") {
@@ -90,7 +97,10 @@ class ReservationServiceTest : DescribeSpec({
         context("위 사항이 모두 지켜졌을 경우") {
             val createReservationRequest = CreateReservationRequest(1L, DateFixture.today, DateFixture.tomorrow)
             every { memberRepository.getMemberByIdOrNull(any()) } returns MemberFixture.buyer.apply { this.id = 1L }
-            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply { this.id = 1L }
+            every { productRepository.getProductById(any()) } returns ProductFixture.tent.apply {
+                this.id = 1L
+                this.member.id = 1L
+            }
             every {
                 reservationRepository.getFirstReservation(any(), any(), any())
             } returns null
