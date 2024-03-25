@@ -32,10 +32,11 @@ class OAuth2LoginSuccessHandler(
             val accessToken = jwtPlugin.generateAccessToken(
                 subject = member?.id.toString(),
                 email = userInfo.email,
-                role = MemberRole.MEMBER.name
+                role = MemberRole.MEMBER.name,
+                response = response
             )
+            response.addHeader("Authorization", "Bearer $accessToken")
             response.contentType = MediaType.APPLICATION_JSON_VALUE
-            response.writer.write(accessToken)
         } else {
             response.contentType = MediaType.APPLICATION_JSON_VALUE
             response.writer.write(

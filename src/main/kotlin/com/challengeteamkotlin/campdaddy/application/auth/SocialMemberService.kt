@@ -8,6 +8,7 @@ import com.challengeteamkotlin.campdaddy.domain.model.member.OAuth2Provider
 import com.challengeteamkotlin.campdaddy.domain.repository.member.MemberRepository
 import com.challengeteamkotlin.campdaddy.infrastructure.jwt.JwtPlugin
 import com.challengeteamkotlin.campdaddy.presentation.auth.dto.request.OAuth2SignupRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +17,7 @@ class SocialMemberService(
     private val jwtPlugin: JwtPlugin
 ) {
 
-    fun register(signupRequest: OAuth2SignupRequest): String {
+    fun register(signupRequest: OAuth2SignupRequest, response: HttpServletResponse): String {
         val existEmail = memberRepository.existMemberByEmail(signupRequest.email)
         if (existEmail) throw DuplicateEmailException(AuthErrorCode.DUPLICATE_EMAIL)
         return memberRepository.createMember(signupRequest.to())
@@ -24,7 +25,8 @@ class SocialMemberService(
                 jwtPlugin.generateAccessToken(
                     subject = it.id!!.toString(),
                     email = it.email,
-                    role = MemberRole.MEMBER.name
+                    role = MemberRole.MEMBER.name,
+                    response = response
                 )
             }
     }
