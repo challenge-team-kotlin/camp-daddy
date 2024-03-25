@@ -38,7 +38,8 @@ object ChatRoomFixture {
 
     val chatRoomResponse = ChatRoomDetailResponse(
         productDetail = productDetail,
-        chatHistory = chatMessageResponse
+        chatHistory = chatMessageResponse,
+        hasNext = true
     )
 
     // Entity

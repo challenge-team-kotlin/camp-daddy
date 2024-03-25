@@ -4,6 +4,7 @@ import com.challengeteamkotlin.campdaddy.application.chat.ChatRoomService
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.CreateChatRoomRequest
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomDetailResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomResponse
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.net.URI
@@ -11,7 +12,7 @@ import java.net.URI
 @RestController
 @RequestMapping("/chatroom")
 class ChatRoomController(
-    private val chatRoomService: ChatRoomService
+    private val chatRoomService: ChatRoomService,
 ) {
     @PostMapping
     fun createChat(@RequestBody request: CreateChatRoomRequest): ResponseEntity<Unit> {
@@ -29,7 +30,7 @@ class ChatRoomController(
 
     @GetMapping("/{roomId}")
     fun getChat(@PathVariable roomId: Long): ResponseEntity<ChatRoomDetailResponse> {
-        val chatList = chatRoomService.getChatDetail(roomId)
+        val chatList = chatRoomService.getChatDetail(roomId, PageRequest.of(0, 20))
 
         return ResponseEntity.ok().body(chatList)
     }
