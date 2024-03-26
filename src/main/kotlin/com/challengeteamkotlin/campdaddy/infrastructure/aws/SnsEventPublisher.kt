@@ -3,6 +3,7 @@ package com.challengeteamkotlin.campdaddy.infrastructure.aws
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
+import java.util.*
 
 class SnsEventPublisher(
     private val snsClient: SnsClient,
@@ -17,6 +18,7 @@ class SnsEventPublisher(
             .topicArn(topicArn)
             .messageGroupId(groupId)
             .message(message)
+            .messageDeduplicationId(UUID.randomUUID().toString())
             .build()
         snsClient.publish(request)
     }
