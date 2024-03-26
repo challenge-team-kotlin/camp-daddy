@@ -13,7 +13,6 @@ import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.CreateCha
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomDetailResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.MessageResponse
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
