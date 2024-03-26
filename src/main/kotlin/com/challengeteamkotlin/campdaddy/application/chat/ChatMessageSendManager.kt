@@ -19,7 +19,7 @@ class ChatMessageSendManager(
             is ReservationEvent -> {
                 val messageRequest = MessageRequest(
                     userId = ADMIN_ID,
-                    message = "예약 상태가 $request.changeStatus(으)로 변경되었습니다.",
+                    message = "예약 상태가 ${request.changeStatus.value}(으)로 변경되었습니다.",
                     status = MessageStatus.NOTICE
                 )
 
