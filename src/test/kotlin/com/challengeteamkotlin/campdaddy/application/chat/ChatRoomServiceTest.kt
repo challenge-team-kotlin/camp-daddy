@@ -20,6 +20,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import userPrincipal
 
 class ChatRoomServiceTest(
     private val chatRoomService: ChatRoomService = mockk(),
@@ -50,17 +51,17 @@ class ChatRoomServiceTest(
     Given("멤버 개인 채팅방 리스트 조회 테스트") {
 
         When("유저의 ID로 조회되는 채팅방이 없으면") {
-            every { chatRoomService.getPersonalChatList(memberId) } returns emptyList()
+            every { chatRoomService.getPersonalChatList(memberId, userPrincipal) } returns emptyList()
 
             Then("빈 리스트를 리턴한다.") {
-                val emptyList = chatRoomService.getPersonalChatList(memberId)
+                val emptyList = chatRoomService.getPersonalChatList(memberId, userPrincipal)
                 emptyList shouldBe emptyList()
             }
         }
 
         When("유저의 ID로 조회되는 채팅방이 있으면") {
-            every { chatRoomService.getPersonalChatList(memberId) } returns personalChatRoomResponse
-            val personalChatRoomResponse = chatRoomService.getPersonalChatList(memberId)
+            every { chatRoomService.getPersonalChatList(memberId, userPrincipal) } returns personalChatRoomResponse
+            val personalChatRoomResponse = chatRoomService.getPersonalChatList(memberId, userPrincipal)
 
             Then("상대방 닉네임, 상품 이미지, 마지막 메세지, 마지막 메세지의 날짜 정보를 가진 채팅방 리스트를 리턴한다.") {
                 personalChatRoomResponse?.map {
@@ -73,8 +74,8 @@ class ChatRoomServiceTest(
     Given("채팅방 조회 테스트") {
 
         When("채팅방 ID로 조회할 때 채팅방이 존재하면") {
-            every { chatRoomService.getChatDetail(any()) } returns chatRoomResponse
-            val existChatRoomResponse =  chatRoomService.getChatDetail(existChatRoomId)
+            every { chatRoomService.getChatDetail(any(), any()) } returns chatRoomResponse
+            val existChatRoomResponse =  chatRoomService.getChatDetail(existChatRoomId, userPrincipal)
             Then("채팅방의 메세지, 상품 정보와 함께 방을 리턴한다.") {
                 existChatRoomResponse.chatHistory shouldBe chatMessageResponse
                 existChatRoomResponse.productDetail shouldBe productDetail
@@ -82,10 +83,10 @@ class ChatRoomServiceTest(
         }
 
         When("채팅방 ID로 조회할 때 채팅방이 존재하지 않으면") {
-            every { chatRoomService.getChatDetail(wrongChatRoomId) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
+            every { chatRoomService.getChatDetail(wrongChatRoomId, userPrincipal) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
 
             Then("예외가 던져진다.") {
-                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(wrongChatRoomId) }
+                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(wrongChatRoomId, userPrincipal) }
 
                 exception.errorCode shouldBe ChatErrorCode.CHAT_NOT_FOUND
             }
@@ -95,12 +96,12 @@ class ChatRoomServiceTest(
     Given("채팅방 삭제 테스트") {
 
         When("채팅방 ID로 삭제를 시도할 때 채팅방이 존재하면") {
-            every { chatRoomService.removeChat(existChatRoomId) } just runs
-            every { chatRoomService.getChatDetail(existChatRoomId) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
+            every { chatRoomService.removeChat(existChatRoomId, userPrincipal) } just runs
+            every { chatRoomService.getChatDetail(existChatRoomId, userPrincipal) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
             every { chatMessageRepository.getChatMessageByChatRoomId(existChatRoomId) } returns emptyList()
             Then("해당 채팅방과 안에 담긴 메세지는 모두 삭제되고, 재조회는 되지 않는다") {
                 val emptyChatHistory = chatMessageRepository.getChatMessageByChatRoomId(existChatRoomId)
-                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(existChatRoomId) }
+                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(existChatRoomId, userPrincipal) }
 
                 exception.errorCode shouldBe ChatErrorCode.CHAT_NOT_FOUND
 
@@ -108,9 +109,9 @@ class ChatRoomServiceTest(
             }
         }
         When("채팅방 ID로 삭제를 시도할 때 채팅방이 존재하지 않으면") {
-            every { chatRoomService.getChatDetail(wrongChatRoomId) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
+            every { chatRoomService.getChatDetail(wrongChatRoomId, userPrincipal) } throws EntityNotFoundException(ChatErrorCode.CHAT_NOT_FOUND)
             Then("예외가 던져진다.") {
-                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(wrongChatRoomId) }
+                val exception = shouldThrowExactly<EntityNotFoundException> { chatRoomService.getChatDetail(wrongChatRoomId, userPrincipal) }
 
                 exception.errorCode shouldBe ChatErrorCode.CHAT_NOT_FOUND
             }
