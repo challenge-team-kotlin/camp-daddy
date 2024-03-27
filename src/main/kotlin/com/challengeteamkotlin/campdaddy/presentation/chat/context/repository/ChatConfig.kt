@@ -6,6 +6,7 @@ import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatRoomReposito
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatRoomRepositoryImpl
 import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.chat.ChatMessageJpaRepository
 import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.chat.ChatRoomJpaRepository
+import com.challengeteamkotlin.campdaddy.infrastructure.hibernate.chat.ChatRoomQueryDslRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -18,7 +19,10 @@ class ChatConfig {
     }
 
     @Bean
-    fun chatRoomRepository(jpaRepository: ChatRoomJpaRepository): ChatRoomRepository {
-        return ChatRoomRepositoryImpl(jpaRepository)
+    fun chatRoomRepository(
+        jpaRepository: ChatRoomJpaRepository,
+        chatRoomQueryDslRepository: ChatRoomQueryDslRepository
+        ): ChatRoomRepository {
+        return ChatRoomRepositoryImpl(jpaRepository, chatRoomQueryDslRepository)
     }
 }
