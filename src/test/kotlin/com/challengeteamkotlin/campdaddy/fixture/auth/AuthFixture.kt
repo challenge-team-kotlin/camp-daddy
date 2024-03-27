@@ -1,3 +1,5 @@
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
+
 //package com.challengeteamkotlin.campdaddy.fixture.auth
 //
 //import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
@@ -40,3 +42,5 @@
 //    // jwtToken, jwtTokenNickname
 //    val succeedJwtToken = "success"
 //}
+
+val userPrincipal = UserPrincipal(999, "access@mail.com", setOf("MEMBER"))

@@ -5,11 +5,24 @@ import com.challengeteamkotlin.campdaddy.common.exception.UnAuthorizationExcepti
 import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 
 fun <T> isAuthorized(
-    id: Long,
+    targetId: Long,
     userPrincipal: UserPrincipal,
     func: () -> T
 ): T {
-    if (id == userPrincipal.id) {
+    if (targetId == userPrincipal.id) {
+        return func.invoke()
+    } else {
+        throw UnAuthorizationException(AuthErrorCode.ACCESS_DENIED)
+    }
+}
+
+fun <T> isAuthorized(
+    id: Long,
+    sellerId: Long,
+    buyerId: Long,
+    func: () -> T
+): T {
+    if (id == sellerId || id == buyerId) {
         return func.invoke()
     } else {
         throw UnAuthorizationException(AuthErrorCode.ACCESS_DENIED)
