@@ -36,7 +36,10 @@ class SwaggerConfig {
                     .version("1.0.0")
             )
             .servers(
-                listOf(Server().url("https://apis.camp-daddy.store"))
+                listOf(
+                    Server().url("https://apis.camp-daddy.store"),
+                    Server().url("http://localhost:8080")
+                )
             )
     }
 }
