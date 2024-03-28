@@ -4,8 +4,6 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import jakarta.servlet.http.Cookie
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.time.Duration
@@ -25,10 +23,9 @@ class JwtPlugin(
         }
     }
 
-    fun generateAccessToken(subject: String, email: String, role: String, response: HttpServletResponse): String {
-        val token = generateToken(subject, email, role, Duration.ofHours(jwtProperties.accessTokenExpirationHour))
-        addTokenToCookie(token, response)
-        return token
+    fun generateAccessToken(subject: String, email: String, role: String): String {
+        return generateToken(subject, email, role, Duration.ofHours(jwtProperties.accessTokenExpirationHour))
+
     }
 
     private fun generateToken(subject: String, email: String, role: String, expirationPeriod: Duration): String {
@@ -47,14 +44,5 @@ class JwtPlugin(
             .claims(claims)
             .signWith(key)
             .compact()
-    }
-
-    private fun addTokenToCookie(token: String, response: HttpServletResponse) {
-        val cookie = Cookie("jwt_token", token)
-        cookie.isHttpOnly = true // JavaScript 에서 쿠키에 접근하지 못하도록 설정
-        cookie.maxAge = (jwtProperties.accessTokenExpirationHour * 60 * 60 * 24 * 7).toInt() // 일주일
-        cookie.path = "/"
-
-        response.addCookie(cookie)
     }
 }

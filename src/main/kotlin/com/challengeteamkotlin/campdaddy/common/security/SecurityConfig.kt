@@ -67,8 +67,9 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
             allowedOriginPatterns = listOf("http://localhost:3000")
-            addAllowedMethod("*")
-            addAllowedHeader("*")
+            allowedMethods = listOf("HEAD","POST","GET","DELETE","PUT")
+            allowedHeaders = listOf("*")
+            exposedHeaders = listOf("Authorization")
             allowCredentials = true
             maxAge = 3600L
         }
