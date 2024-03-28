@@ -24,7 +24,6 @@ spring:
             #http://localhost:8080/oauth2/callback/kakao
             authorization_grant_type: authorization_code
             scope:
-              - profile_nickname
               - account_email
 
           naver:
