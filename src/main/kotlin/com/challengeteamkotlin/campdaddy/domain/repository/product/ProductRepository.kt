@@ -19,6 +19,8 @@ interface ProductRepository {
 
     fun delete(productEntity: ProductEntity);
 
+    fun getProductAll(pageable: Pageable):Slice<ProductEntity>
+
     fun getProductById(productId:Long):ProductEntity?
 
     fun getProductByMemberId(memberId:Long):List<ProductEntity>

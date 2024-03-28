@@ -84,9 +84,14 @@ class ProductService(
                 ProductResponse.from(it)
             } ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
 
+    @Transactional
+    fun getProducts(pageable: Pageable):Slice<ProductResponse>{
+        println("test")
+        return productRepository.getProductAll(pageable).map { ProductResponse.from(it) }
+    }
 
     @Transactional
-    fun getProductList(request: SearchProductRequest, pageable: Pageable): Slice<*> {
+    fun getProductListWithQuery(request: SearchProductRequest, pageable: Pageable): Slice<*> {
         if (request.search != null) {
             return if (request.filterReservation) productRepository.getProductBySearchableAndReservationFilter(
                     startDate = request.startDate,
