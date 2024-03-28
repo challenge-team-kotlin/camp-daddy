@@ -43,8 +43,6 @@ class JwtAuthenticationFilter(
                 }
         }
 
-        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
-
         filterChain.doFilter(request, response)
     }
 
