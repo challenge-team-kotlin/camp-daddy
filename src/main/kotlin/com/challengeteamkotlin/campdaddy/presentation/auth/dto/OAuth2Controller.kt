@@ -2,7 +2,6 @@ package com.challengeteamkotlin.campdaddy.presentation.auth.dto
 
 import com.challengeteamkotlin.campdaddy.application.auth.SocialMemberService
 import com.challengeteamkotlin.campdaddy.presentation.auth.dto.request.OAuth2SignupRequest
-import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,10 +16,9 @@ class OAuth2Controller(
 
     @PostMapping("/signup")
     fun signup(
-      @Valid @RequestBody signupRequest: OAuth2SignupRequest,
-      response: HttpServletResponse
+      @Valid @RequestBody signupRequest: OAuth2SignupRequest
     ): ResponseEntity<String> {
-        val token = socialMemberService.register(signupRequest, response)
+        val token = socialMemberService.register(signupRequest)
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .header("Authorization", "Bearer $token")
