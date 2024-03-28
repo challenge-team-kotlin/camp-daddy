@@ -22,19 +22,17 @@ class OAuth2LoginSuccessHandler(
         var url = "http://localhost:3000/oauth2/redirect"
         val userInfo = authentication.principal as OAuth2UserInfo
         if (socialMemberService.existMember(OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId)) {
-            val accessToken =
-                socialMemberService.login(OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId, userInfo.email)
+            val accessToken = socialMemberService.login(
+                OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId, userInfo.email
+            )
             url += "?token=${accessToken}"
         } else {
-            socialMemberService.saveSocialInfo(
-                userInfo.email,
-                OAuth2Provider.valueOf(userInfo.provider),
-                userInfo.providerId
-            )
-            response.contentType = MediaType.APPLICATION_JSON_VALUE
-            url += "?email=${userInfo.email}&provider=${userInfo.provider}&providerId=${userInfo.providerId}"
-
+            if (!socialMemberService.checkSocialInfo(userInfo.email, OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId)) {
+                socialMemberService.saveSocialInfo(userInfo.email, OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId)
+                response.contentType = MediaType.APPLICATION_JSON_VALUE
+            }
         }
+        url += "?email=${userInfo.email}&provider=${userInfo.provider}&providerId=${userInfo.providerId}"
         redirectStrategy.sendRedirect(request, response, url)
     }
 }

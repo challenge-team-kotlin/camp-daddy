@@ -23,4 +23,6 @@ interface MemberRepository {
     fun saveSocialInfo(email: String, provider: OAuth2Provider, providerId: String): SocialMemberEntity
 
     fun existSocialInfo(email: String, provider: OAuth2Provider, providerId: String): Boolean
+
+    fun existSocialMember(socialMemberEntity: SocialMemberEntity): Boolean
 }

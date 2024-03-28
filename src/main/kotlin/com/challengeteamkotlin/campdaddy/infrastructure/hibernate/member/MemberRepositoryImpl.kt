@@ -45,4 +45,8 @@ class MemberRepositoryImpl(
     override fun existSocialInfo(email: String, provider: OAuth2Provider, providerId: String): Boolean {
         return socialMemberJpaRepository.existsByEmailAndProviderAndProviderId(email, provider, providerId)
     }
+
+    override fun existSocialMember(socialMemberEntity: SocialMemberEntity): Boolean {
+        return socialMemberJpaRepository.existsSocialMemberEntity(socialMemberEntity)
+    }
 }

@@ -19,12 +19,13 @@ class SocialMemberService(
 ) {
 
     fun register(signupRequest: OAuth2SignupRequest): String {
-        val checkSocialInfo = memberRepository.existSocialInfo(
-            signupRequest.email,
-            OAuth2Provider.valueOf(signupRequest.provider),
-            signupRequest.providerId
-        )
-        if (!checkSocialInfo) throw EntityNotFoundException(AuthErrorCode.USER_INFO_RETRIEVAL_FAILURE)
+
+        if (!checkSocialInfo(
+                signupRequest.email,
+                OAuth2Provider.valueOf(signupRequest.provider),
+                signupRequest.providerId
+            )
+        ) throw EntityNotFoundException(AuthErrorCode.USER_INFO_RETRIEVAL_FAILURE)
         val existEmail = memberRepository.existMemberByEmail(signupRequest.email)
         if (existEmail) throw DuplicateEmailException(AuthErrorCode.DUPLICATE_EMAIL)
         return memberRepository.createMember(signupRequest.to())
@@ -46,15 +47,19 @@ class SocialMemberService(
         )
     }
 
+    fun checkSocialInfo(email: String, provider: OAuth2Provider, providerId: String): Boolean {
+        return memberRepository.existSocialInfo(email, provider, providerId)
+    }
+
     fun existMember(provider: OAuth2Provider, providerId: String): Boolean {
         return memberRepository.existMemberByProviderAndProviderId(provider, providerId)
     }
 
-    private fun findMember(provider: OAuth2Provider, providerId: String): MemberEntity {
-        return memberRepository.findMemberByProviderAndProviderId(provider, providerId)
+    fun saveSocialInfo(email: String, provider: OAuth2Provider, providerId: String): SocialMemberEntity {
+        return memberRepository.saveSocialInfo(email, provider, providerId)
     }
 
-    fun saveSocialInfo(email:String, provider: OAuth2Provider, providerId: String): SocialMemberEntity {
-        return memberRepository.saveSocialInfo(email, provider, providerId)
+    private fun findMember(provider: OAuth2Provider, providerId: String): MemberEntity {
+        return memberRepository.findMemberByProviderAndProviderId(provider, providerId)
     }
 }
