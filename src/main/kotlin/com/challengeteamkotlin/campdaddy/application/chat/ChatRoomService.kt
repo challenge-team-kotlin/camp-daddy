@@ -3,7 +3,9 @@ package com.challengeteamkotlin.campdaddy.application.chat
 import com.challengeteamkotlin.campdaddy.application.chat.exception.ChatErrorCode
 import com.challengeteamkotlin.campdaddy.application.member.exception.MemberErrorCode
 import com.challengeteamkotlin.campdaddy.application.product.exception.ProductErrorCode
+import com.challengeteamkotlin.campdaddy.common.auth.isAuthorized
 import com.challengeteamkotlin.campdaddy.common.exception.EntityNotFoundException
+import com.challengeteamkotlin.campdaddy.common.security.UserPrincipal
 import com.challengeteamkotlin.campdaddy.domain.model.chat.ChatRoomEntity
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatMessageRepository
 import com.challengeteamkotlin.campdaddy.domain.repository.chat.ChatRoomRepository
@@ -13,7 +15,6 @@ import com.challengeteamkotlin.campdaddy.presentation.chat.dto.request.CreateCha
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomDetailResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.ChatRoomResponse
 import com.challengeteamkotlin.campdaddy.presentation.chat.dto.response.MessageResponse
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -27,8 +28,12 @@ class ChatRoomService(
 
     @Transactional
     fun createChat(request: CreateChatRoomRequest): Long {
-        val buyer = memberRepository.getMemberByIdOrNull(request.buyerId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-        val product = productRepository.getProductById(request.productId) ?: throw EntityNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION)
+        val buyer = memberRepository.getMemberByIdOrNull(request.buyerId) ?: throw EntityNotFoundException(
+            MemberErrorCode.MEMBER_NOT_FOUND
+        )
+        val product = productRepository.getProductById(request.productId) ?: throw EntityNotFoundException(
+            ProductErrorCode.PRODUCT_NOT_FOUND_EXCEPTION
+        )
 
         return when (val chatRoom = chatRoomRepository.getChatRoomByBuyerIdAndProductId(request.buyerId, request.productId)) {
             null -> chatRoomRepository.createChat(request.of(buyer, product.member, product)).id!!
@@ -37,34 +42,32 @@ class ChatRoomService(
     }
 
     @Transactional(readOnly = true)
-    fun getPersonalChatList(memberId: Long): List<ChatRoomResponse>? {
-        val member = memberRepository.getMemberByIdOrNull(memberId) ?: throw EntityNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND)
-
-        return chatRoomRepository.getChatRoomByBuyerIdOrSellerId(member.id!!, member.id!!)?.map {
-            val latestChat = chatMessageRepository.getLatestChatMessage(it.id!!)
-
-            when (it.buyer) {
-                member -> ChatRoomResponse.of(it.seller, it.product, latestChat)
-                else -> ChatRoomResponse.of(it.buyer, it.product, latestChat)
-            }
-        } ?: emptyList()
+    fun getPersonalChatList(memberId: Long, userPrincipal: UserPrincipal): List<ChatRoomResponse>? {
+        return isAuthorized(memberId, userPrincipal) {
+            chatRoomRepository.getPersonalChatList(memberId)
+        }
     }
 
     @Transactional(readOnly = true)
-    fun getChatDetail(roomId: Long): ChatRoomDetailResponse {
+    fun getChatDetail(roomId: Long, userPrincipal: UserPrincipal): ChatRoomDetailResponse {
         val chatRoom = getChatRoom(roomId)
-        val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!)?.map {
-            MessageResponse.from(it)
-        } ?: emptyList()
 
-        return ChatRoomDetailResponse.of(chatRoom, chatMessages)
+        return isAuthorized(userPrincipal.id, chatRoom.seller.id!!, chatRoom.buyer.id!!) {
+            val chatMessages = chatMessageRepository.getChatMessageByChatRoomId(chatRoom.id!!)?.map {
+                MessageResponse.from(it)
+            } ?: emptyList()
+
+            ChatRoomDetailResponse.of(chatRoom, chatMessages)
+        }
     }
 
     @Transactional
-    fun removeChat(roomId: Long) {
+    fun removeChat(roomId: Long, userPrincipal: UserPrincipal) {
         val chatRoom = getChatRoom(roomId)
 
-        chatRoomRepository.removeChat(chatRoom)
+        return isAuthorized(userPrincipal.id, chatRoom.seller.id!!, chatRoom.buyer.id!!) {
+            chatRoomRepository.removeChat(chatRoom)
+        }
     }
 
     private fun getChatRoom(roomId: Long): ChatRoomEntity {

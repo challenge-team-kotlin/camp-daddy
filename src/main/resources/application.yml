@@ -21,7 +21,7 @@ spring:
             client_secret: ${KAKAO_CLIENT_SECRET}
             client_authentication_method: client_secret_post
             redirect-uri: ${REDIRECT_URL}/kakao
-            #http://localhost:8080/oauth2/callback/kakao
+              #http://localhost:8080/oauth2/callback/kakao
             authorization_grant_type: authorization_code
             scope:
               - account_email
@@ -29,7 +29,7 @@ spring:
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: ${ROOT_URI}/oauth2/callback/naver
+            redirect-uri: ${REDIRECT_URL}/naver
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: naver
@@ -37,10 +37,7 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: http://ec2-43-203-62-127.ap-northeast-2.compute.amazonaws.com:8080/oauth2/callback/google
-            #http://localhost:8080/oauth2/callback/google
-
-            # http -> https 로 바꿔야함
+            redirect-uri: ${REDIRECT_URL}/google
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: google
@@ -86,3 +83,4 @@ aws:
     reservation-change: ${SNS_RESERVATION_ARN}
   sqs-name:
     reservation-change-queue: ${SQS_RESERVATION_NAME}
+

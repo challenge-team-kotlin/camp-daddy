@@ -12,7 +12,7 @@ class ReservationEventPublisherImpl(
     lateinit var snsArn: String
 
     override fun publish(reservationEvent: ReservationEvent) {
-        val groupId = "${reservationEvent.buyerId} ,${reservationEvent.sellerId}"
+        val groupId = "${reservationEvent.buyerId},${reservationEvent.sellerId},${reservationEvent.productId}"
         snsEventPublisher.publishEvent(groupId, snsArn, reservationEvent)
     }
 }
