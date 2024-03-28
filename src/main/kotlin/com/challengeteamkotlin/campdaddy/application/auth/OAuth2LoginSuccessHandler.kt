@@ -11,19 +11,21 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
 
 @Component
 class OAuth2LoginSuccessHandler(
     private val jwtPlugin: JwtPlugin,
     private val socialMemberService: SocialMemberService
-) : AuthenticationSuccessHandler {
+) : SimpleUrlAuthenticationSuccessHandler() {
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
         authentication: Authentication
     ) {
+        var url = "http://localhost:3000/oauth2/redirect"
         val userInfo = authentication.principal as OAuth2UserInfo
         val existMember =
             socialMemberService.existMember(OAuth2Provider.valueOf(userInfo.provider), userInfo.providerId)
@@ -35,19 +37,14 @@ class OAuth2LoginSuccessHandler(
                 role = MemberRole.MEMBER.name,
                 response = response
             )
-            response.addHeader("Authorization", "Bearer $accessToken")
-            response.contentType = MediaType.APPLICATION_JSON_VALUE
+            url += "?token=${accessToken}"
+
+
         } else {
             response.contentType = MediaType.APPLICATION_JSON_VALUE
-            response.writer.write(
-                jacksonObjectMapper().writeValueAsString(
-                    SocialLoginResponse.of(
-                        userInfo.email,
-                        userInfo.provider,
-                        userInfo.providerId
-                    )
-                )
-            )
+            url += "?email=${userInfo.email}&provider=${userInfo.provider}&providerId=${userInfo.providerId}"
+
         }
+        redirectStrategy.sendRedirect(request,response,url)
     }
 }
