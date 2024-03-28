@@ -13,6 +13,7 @@ import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -53,9 +54,13 @@ class ProductController(
     ): ResponseEntity<Unit> =
             ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId, userPrincipal.id))
 
+    @GetMapping("/list")
+    fun getProductList():ResponseEntity<Slice<ProductResponse>>{
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(PageRequest.of(1,10)))
+    }
 
     @GetMapping()
-    fun getProductList(
+    fun getProductListWithQuery(
             @RequestParam startDate: LocalDate,
             @RequestParam endDate: LocalDate,
             @RequestParam category: Category,
@@ -66,7 +71,7 @@ class ProductController(
         val searchProductRequest = SearchProductRequest(
                 startDate, endDate, category, filterReservation, search,
         )
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductList(searchProductRequest, PageRequest.of(page, 10)))
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListWithQuery(searchProductRequest, PageRequest.of(page, 10)))
     }
 
     @GetMapping("/{productId}")
@@ -86,6 +91,7 @@ class ProductController(
     @GetMapping("/categories")
     fun getCategoryList(): ResponseEntity<List<String>> =
             ResponseEntity.status(HttpStatus.OK).body(productService.getCategoryList())
+
 
 
 }

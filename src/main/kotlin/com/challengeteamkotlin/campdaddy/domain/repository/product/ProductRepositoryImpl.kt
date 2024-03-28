@@ -90,4 +90,8 @@ class ProductRepositoryImpl(
             pageable
         )
     }
+
+    override fun getProductAll(pageable: Pageable): Slice<ProductEntity> {
+        return productJpaRepository.findAll(pageable)
+    }
 }
